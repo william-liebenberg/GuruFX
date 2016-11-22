@@ -21,6 +21,7 @@ namespace GuruFX.TestApp
 			Logger.Instance.Log(MessageType.Warning, "This is a Warning!");
 			Logger.Instance.Log(new Exception("This is an exception!"));
 
+			Logger.Instance.Log("This is just a test");
 		}
 
 		private static void Instance_MessageReceived(object sender, LogEventArgs e)
