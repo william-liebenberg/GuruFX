@@ -2,7 +2,7 @@
 
 namespace GuruFX.Core.Logger
 {
-	public class Logger : Singleton<Logger>
+	public class UILogger : ILogger
 	{
 		readonly object mLockSync = new object();
 
@@ -12,39 +12,40 @@ namespace GuruFX.Core.Logger
 
 		public void Log(string msg)
 		{
-			this.OnMessage(MessageType.Information, msg);
+			OnMessage(MessageType.Information, msg);
 		}
 
 		public void Log(MessageType t, string message)
 		{
-			this.OnMessage(t, message);
+			OnMessage(t, message);
 		}
 
-		public void Log(Exception ex)
+		public void Log(Exception ex, string msg)
 		{
-			this.OnMessage(MessageType.Error, ex.ToString());
+			// TODO: Add the message as part of the exception error
+			OnMessage(MessageType.Error, ex.ToString());
 		}
 
 		public void Log(string format, params object[] items)
 		{
-			this.Log(string.Format(format, items));
+			Log(string.Format(format, items));
 		}
 
 		public void Log(MessageType t, string format, params object[] items)
 		{
-			this.Log(t, string.Format(format, items));
+			Log(t, string.Format(format, items));
 		}
 
-		public void ClearLog()
+		public void Clear()
 		{
-			this.ClearLog(MessageType.All);
+			Clear(MessageType.All);
 		}
 
-		public void ClearLog(MessageType flagLogsToClear)
+		public void Clear(MessageType flagLogsToClear)
 		{
 			lock (mLockSync)
 			{
-				this.ClearMessages?.Invoke(this, new ClearLogEventArgs(flagLogsToClear));
+				ClearMessages?.Invoke(this, new ClearLogEventArgs(flagLogsToClear));
 			}
 		}
 
@@ -52,7 +53,7 @@ namespace GuruFX.Core.Logger
 		{
 			lock (mLockSync)
 			{
-				this.MessageReceived?.Invoke(this, new LogEventArgs(t, message));
+				MessageReceived?.Invoke(this, new LogEventArgs(t, message));
 			}
 		}
 	}

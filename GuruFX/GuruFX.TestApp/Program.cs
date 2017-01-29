@@ -1,9 +1,5 @@
-﻿using GuruFX.Core.Logger;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using GuruFX.Core.Logger;
 
 namespace GuruFX.TestApp
 {
@@ -11,21 +7,17 @@ namespace GuruFX.TestApp
 	{
 		static void Main(string[] args)
 		{
-			Logger.Instance.MessageReceived += Instance_MessageReceived;
-			Logger.Instance.Log("We have a logger!");
-			Logger.Instance.Log(MessageType.CompilerError, "This is a compiler error!");
-			Logger.Instance.Log(MessageType.Error, "This is a compiler error!");
-			Logger.Instance.Log(MessageType.Information, "This is Information!");
-			Logger.Instance.Log(MessageType.None, "This is a nothing!");
-			Logger.Instance.Log(MessageType.RuntimeStatistics, "This is a Runtime Statistic!");
-			Logger.Instance.Log(MessageType.Warning, "This is a Warning!");
-			Logger.Instance.Log(new Exception("This is an exception!"));
-
-		}
-
-		private static void Instance_MessageReceived(object sender, LogEventArgs e)
-		{
-			Console.WriteLine(e.MessageType.ToString() + ": " + e.Message);
+			//using (var logger = new FileLogger("GuruFX.log"))
+			var logger = new ConsoleLogger();
+			{
+				logger.Log("Message");
+				logger.Log(MessageType.Information, "This is Information");
+				logger.Log(MessageType.Warning, "This is a Warning");
+				logger.Log(MessageType.Error, "This is an Error");
+				logger.Log(MessageType.CompilerError, "This is Compiler Error");
+				logger.Log(MessageType.RuntimeStatistics, "This is a Runtime Stat");
+				logger.Log(new Exception("ExceptionMessage"), "I made an exception out of thin air!");
+			}
 		}
 	}
 }
