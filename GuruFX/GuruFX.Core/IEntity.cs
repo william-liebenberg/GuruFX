@@ -3,11 +3,17 @@ using System.Collections.Generic;
 
 namespace GuruFX.Core
 {
-	public interface IEntity
+	public interface IEntity : IComponentFactory, IComponentSearch
 	{
-		Guid InstanceID { get; set; }
-		string Name { get; set; }
 		Dictionary<Guid, IComponent> Components { get; set; }
 		Dictionary<Guid, IEntity> Entities { get; set; }
+		Guid InstanceID { get; set; }
+		string Name { get; set; }
+
+		bool AddComponent(IComponent component);
+		bool AddComponents(IComponent[] components);
+
+		IComponent FindComponent(IComponent component);
+		IComponent FindComponent(Guid instanceID);
 	}
 }

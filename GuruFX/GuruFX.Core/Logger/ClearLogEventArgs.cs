@@ -4,17 +4,17 @@ namespace GuruFX.Core.Logger
 {
 	public class ClearLogEventArgs : EventArgs
 	{
-		MessageType m_messageTypesToClear = MessageType.None;
+		MessageType mMessageTypesToClear = MessageType.None;
 		
 		public ClearLogEventArgs(MessageType messageTypesToClear)
 		{
-			this.MessageTypesToClear = messageTypesToClear;
+			MessageTypesToClear = messageTypesToClear;
 		}
 		
 		public MessageType MessageTypesToClear
 		{
-			get { return m_messageTypesToClear; }
-			set { m_messageTypesToClear = value; }
+			get { return mMessageTypesToClear; }
+			set { mMessageTypesToClear = value; }
 		}
 	}
 }

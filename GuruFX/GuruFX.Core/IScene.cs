@@ -2,11 +2,11 @@
 
 namespace GuruFX.Core
 {
-	public interface IScene
+	public interface IScene : IEntityFactory
 	{
-		bool AddEntity(IEntity entity);
-		IEntity CreateEntity();
 		IEntity FindEntity(IEntity entity);
 		IEntity FindEntity(Guid instanceID);
+		IEntity RemoveEntity(IEntity entity);
+		IEntity RemoveEntity(Guid instanceID);
 	}
 }
