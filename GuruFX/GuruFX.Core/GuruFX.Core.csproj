@@ -64,6 +64,8 @@
     <Compile Include="System.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Entities\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
