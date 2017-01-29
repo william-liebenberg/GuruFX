@@ -12,7 +12,7 @@ namespace GuruFX.Core.Logger
 
 		public FileLogger(string filename)
 		{
-			this.Filename = filename;
+			Filename = filename;
 			FileLogger.OpenStreams(this);
 		}
 

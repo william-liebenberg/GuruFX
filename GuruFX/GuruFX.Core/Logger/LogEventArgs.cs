@@ -4,31 +4,31 @@ namespace GuruFX.Core.Logger
 {
 	public class LogEventArgs : EventArgs
 	{
-		MessageType m_messageType = MessageType.Information;
-		string m_message = string.Empty;
+		MessageType mMessageType = MessageType.Information;
+		string mMessage = string.Empty;
 
 		public LogEventArgs(string message)
 		{
-			this.m_messageType = MessageType.Information;
-			this.m_message = message;
+			mMessageType = MessageType.Information;
+			mMessage = message;
 		}
 
 		public LogEventArgs(MessageType messageType, string message)
 		{
-			this.m_messageType = messageType;
-			this.m_message = message;
+			mMessageType = messageType;
+			mMessage = message;
 		}
 
 		public MessageType MessageType
 		{
-			get { return m_messageType; }
-			set { m_messageType = value; }
+			get { return mMessageType; }
+			set { mMessageType = value; }
 		}
 
 		public string Message
 		{
-			get { return m_message; }
-			set { m_message = value; }
+			get { return mMessage; }
+			set { mMessage = value; }
 		}
 	}
 }
