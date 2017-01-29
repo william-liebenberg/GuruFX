@@ -1,13 +1,32 @@
-﻿namespace GuruFX.Core
-{
-	public class Component
-	{
-		public string Name { get; set; }
-		public Entity Entity { get; private set; }
+﻿using System;
 
-		public Component(Entity entity)
+namespace GuruFX.Core
+{
+	public class Component : IComponent
+	{
+		IEntity mParentEntity;
+
+		public Component(IEntity parent)
 		{
-			this.Entity = entity;
+			if (this.Parent != null)
+			{
+				this.Parent = parent;
+			}
 		}
+
+		public IEntity Parent
+		{
+			get
+			{
+				return this.mParentEntity;
+			}
+			private set
+			{
+				this.mParentEntity = value;
+			}
+		}
+
+		public string Name { get; set; }
+		public Guid InstanceID { get; set; } = Guid.NewGuid();
 	}
 }

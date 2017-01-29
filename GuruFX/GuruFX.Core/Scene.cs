@@ -1,16 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace GuruFX.Core
 {
-	public class Scene
+	public class Scene : IScene
 	{
-		List<Entity> m_entities = new List<Entity>();
+		readonly Dictionary<Guid, IEntity> mEntities = new Dictionary<Guid, IEntity>();
 
-		public Entity CreateEntity()
+		public IEntity CreateEntity()
 		{
-			Entity entity = new Entity();
-			m_entities.Add(entity);
+			var entity = new Entity();
+			mEntities.Add(entity.InstanceID, entity);
 			return entity;
+		}
+
+		public IEntity FindEntity(IEntity entity)
+		{
+			if(entity == null)
+			{
+				return null;
+			}
+			return FindEntity(entity.InstanceID);
+		}
+
+		public IEntity FindEntity(Guid instanceID)
+		{
+			IEntity entity;
+			mEntities.TryGetValue(instanceID, out entity);
+			return entity;
+		}
+
+		public bool AddEntity(IEntity entity)
+		{
+			if(entity == null)
+			{
+				return false;
+			}
+
+			var existingEntity = FindEntity(entity);
+			if(existingEntity == null)
+			{
+				return false;
+			}
+
+			mEntities.Add(entity.InstanceID, entity);
+			return true;
 		}
 	}
 }
