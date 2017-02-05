@@ -54,6 +54,10 @@
       <Project>{f1dc67bf-540f-4706-aa1d-617fe35a9be3}</Project>
       <Name>GuruFX.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GuruFX.Logging\GuruFX.Logging.csproj">
+      <Project>{4CB6728D-4E24-4778-93ED-ED91FEAA4B45}</Project>
+      <Name>GuruFX.Logging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

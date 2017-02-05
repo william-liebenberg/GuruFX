@@ -5,15 +5,15 @@ namespace GuruFX.Core.Logger
 {
 	public class FileLogger : ILogger, IDisposable
 	{
-		private System.IO.FileStream mFileStream;
-		private System.IO.StreamWriter mStreamWriter;
+		private FileStream mFileStream;
+		private StreamWriter mStreamWriter;
 
 		public string Filename { get; set; }
 
 		public FileLogger(string filename)
 		{
 			Filename = filename;
-			FileLogger.OpenStreams(this);
+			OpenStreams();
 		}
 
 		public void Clear()
@@ -46,9 +46,14 @@ namespace GuruFX.Core.Logger
 			Log(msgType.ToString() + ": " + msg);
 		}
 
-		private static void OpenStreams(FileLogger instance)
+		private void OpenStreams()
 		{
-			var finf = new FileInfo(Path.GetFullPath(instance.Filename));
+			FileInfo finf = new FileInfo(Path.GetFullPath(Filename));
+			if (finf.Directory == null)
+			{
+				return;
+			}
+
 			if (!finf.Directory.Exists)
 			{
 				finf.Directory.Create();
@@ -56,26 +61,26 @@ namespace GuruFX.Core.Logger
 
 			try
 			{
-				instance.mFileStream = new FileStream(finf.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
-				instance.mStreamWriter = new StreamWriter(instance.mFileStream);
+				mFileStream = new FileStream(finf.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
+				mStreamWriter = new StreamWriter(mFileStream);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				CloseStreams(instance);
-				throw ex;
+				CloseStreams();
+				throw;
 			}
 		}
 
-		private static void CloseStreams(FileLogger instance)
+		private void CloseStreams()
 		{
-			instance.mStreamWriter?.Flush();
-			instance.mFileStream?.Flush();
+			mStreamWriter?.Flush();
+			mFileStream?.Flush();
 
-			instance.mStreamWriter?.Close();
-			instance.mFileStream?.Close();
+			mStreamWriter?.Dispose();
+			mFileStream?.Dispose();
 
-			instance.mStreamWriter = null;
-			instance.mFileStream = null;
+			mStreamWriter = null;
+			mFileStream = null;
 		}
 
 		#region IDisposable Support
@@ -88,7 +93,7 @@ namespace GuruFX.Core.Logger
 				if (disposing)
 				{
 					// TODO: dispose managed state (managed objects).
-					FileLogger.CloseStreams(this);
+					CloseStreams();
 				}
 
 				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
