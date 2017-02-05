@@ -7,8 +7,8 @@ namespace GuruFX.Core
 #pragma warning restore RECS0014 // If all fields, properties and methods members are static, the class can be made static.
 		where T : class, new()
 	{
-		static readonly Lazy<T> mSingleton = new Lazy<T>(() => new T());
+		static readonly Lazy<T> m_singletonInstance = new Lazy<T>(() => new T());
 
-		public static T Instance => mSingleton.Value;
+		public static T Instance => m_singletonInstance.Value;
 	}
 }

@@ -3,9 +3,9 @@ using GuruFX.Core.Logger;
 
 namespace GuruFX.TestApp
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			//using (var logger = new FileLogger("GuruFX.log"))
 			var logger = new ConsoleLogger();

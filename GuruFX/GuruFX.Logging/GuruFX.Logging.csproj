@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F1DC67BF-540F-4706-AA1D-617FE35A9BE3}</ProjectGuid>
+    <ProjectGuid>{4CB6728D-4E24-4778-93ED-ED91FEAA4B45}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuruFX.Core</RootNamespace>
-    <AssemblyName>GuruFX.Core</AssemblyName>
+    <RootNamespace>GuruFX.Logging</RootNamespace>
+    <AssemblyName>GuruFX.Logging</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,26 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Component.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Extensions\ComponentExtensions.cs" />
-    <Compile Include="Extensions\EntityExtensions.cs" />
-    <Compile Include="IEntityComponentBase.cs" />
-    <Compile Include="IComponent.cs" />
-    <Compile Include="IComponentFactory.cs" />
-    <Compile Include="IEntity.cs" />
-    <Compile Include="IEntityFactory.cs" />
-    <Compile Include="IRenderable.cs" />
-    <Compile Include="IScene.cs" />
-    <Compile Include="ISystem.cs" />
-    <Compile Include="IUpdateable.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="ClearLogEventArgs.cs" />
+    <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="FileLogger.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="LogEventArgs.cs" />
+    <Compile Include="MessageType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenes\Scene.cs" />
-    <Compile Include="Singleton.cs" />
-    <Compile Include="System.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Systems\" />
+    <Compile Include="UILogger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
