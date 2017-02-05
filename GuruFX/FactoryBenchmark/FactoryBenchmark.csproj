@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F1DC67BF-540F-4706-AA1D-617FE35A9BE3}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{0D2336DB-46A5-46A9-B71D-61E1B4056BC0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuruFX.Core</RootNamespace>
-    <AssemblyName>GuruFX.Core</AssemblyName>
+    <RootNamespace>FactoryBenchmark</RootNamespace>
+    <AssemblyName>FactoryBenchmark</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -40,27 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Component.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Extensions\ComponentExtensions.cs" />
-    <Compile Include="Extensions\EntityExtensions.cs" />
-    <Compile Include="Factory.cs" />
-    <Compile Include="IEntityComponentBase.cs" />
-    <Compile Include="IComponent.cs" />
-    <Compile Include="IComponentFactory.cs" />
-    <Compile Include="IEntity.cs" />
-    <Compile Include="IEntityFactory.cs" />
-    <Compile Include="IRenderable.cs" />
-    <Compile Include="IScene.cs" />
-    <Compile Include="ISystem.cs" />
-    <Compile Include="IUpdateable.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenes\Scene.cs" />
-    <Compile Include="Singleton.cs" />
-    <Compile Include="System.cs" />
+    <Compile Include="TestComponent.cs" />
+    <Compile Include="TestComponentBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Systems\" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GuruFX.Core\GuruFX.Core.csproj">
+      <Project>{F1DC67BF-540F-4706-AA1D-617FE35A9BE3}</Project>
+      <Name>GuruFX.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
