@@ -65,7 +65,7 @@ namespace GuruFX.Core.Entities
 		/// <summary>
 		/// Get the Root Entity (Root node of the Scene)
 		/// </summary>
-		public IEntity Root => Parent?.Parent ?? this;
+		public IEntity Root => Parent?.Root ?? Parent ?? this;
 
 		/// <summary>
 		/// The Entity can be set to Active or Inactive.

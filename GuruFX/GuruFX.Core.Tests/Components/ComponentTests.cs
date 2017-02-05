@@ -357,5 +357,85 @@ namespace GuruFX.Core.Tests.Components
 			Assert.IsTrue(fb.Contains(fakeComponentB1));
 			Assert.IsTrue(fb.Contains(fakeComponentB2));
 		}
+
+		[TestMethod]
+		public void RootTest_1()
+		{
+			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_2()
+		{
+			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
+			Entity e2 = c1.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, c1.Parent.Root);
+			Assert.AreSame(m_root, e2.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_3()
+		{
+			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
+			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
+			Entity e3 = c2.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, c1.Parent.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, c2.Parent.Root);
+			Assert.AreSame(m_root, e3.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_4()
+		{
+			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
+			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
+			Entity e3 = c2.CreateAndAddEntity<Entity>();
+			FakeComponent c3 = e3.CreateAndAddComponent<FakeComponent>();
+			Entity e4 = c3.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, c1.Parent.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, c2.Parent.Root);
+			Assert.AreSame(m_root, e3.Root);
+			Assert.AreSame(m_root, c3.Parent.Root);
+			Assert.AreSame(m_root, e4.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_5()
+		{
+			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
+			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
+			Entity e3 = c2.CreateAndAddEntity<Entity>();
+			FakeComponent c3 = e3.CreateAndAddComponent<FakeComponent>();
+			Entity e4 = c3.CreateAndAddEntity<Entity>();
+			FakeComponent c4 = e4.CreateAndAddComponent<FakeComponent>();
+			Entity e5 = c4.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, c1.Parent.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, c2.Parent.Root);
+			Assert.AreSame(m_root, e3.Root);
+			Assert.AreSame(m_root, c3.Parent.Root);
+			Assert.AreSame(m_root, e4.Root);
+			Assert.AreSame(m_root, c4.Parent.Root);
+			Assert.AreSame(m_root, e5.Root);
+		}
 	}
 }
