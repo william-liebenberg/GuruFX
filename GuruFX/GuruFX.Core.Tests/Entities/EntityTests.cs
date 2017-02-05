@@ -348,5 +348,65 @@ namespace GuruFX.Core.Tests.Entities
 			Assert.IsTrue(fb.Contains(fakeComponentB1));
 			Assert.IsTrue(fb.Contains(fakeComponentB2));
 		}
+
+		[TestMethod]
+		public void RootTest_1()
+		{
+			Entity e1 = m_root.CreateAndAddEntity<Entity>();
+			
+			Assert.AreSame(m_root, e1.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_2()
+		{
+			Entity e1 = m_root.CreateAndAddEntity<Entity>();
+			Entity e2 = e1.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, e2.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_3()
+		{
+			Entity e1 = m_root.CreateAndAddEntity<Entity>();
+			Entity e2 = e1.CreateAndAddEntity<Entity>();
+			Entity e3 = e2.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, e3.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_4()
+		{
+			Entity e1 = m_root.CreateAndAddEntity<Entity>();
+			Entity e2 = e1.CreateAndAddEntity<Entity>();
+			Entity e3 = e2.CreateAndAddEntity<Entity>();
+			Entity e4 = e3.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, e3.Root);
+			Assert.AreSame(m_root, e4.Root);
+		}
+
+		[TestMethod]
+		public void RootTest_5()
+		{
+			Entity e1 = m_root.CreateAndAddEntity<Entity>();
+			Entity e2 = e1.CreateAndAddEntity<Entity>();
+			Entity e3 = e2.CreateAndAddEntity<Entity>();
+			Entity e4 = e3.CreateAndAddEntity<Entity>();
+			Entity e5 = e4.CreateAndAddEntity<Entity>();
+
+			Assert.AreSame(m_root, e1.Root);
+			Assert.AreSame(m_root, e2.Root);
+			Assert.AreSame(m_root, e3.Root);
+			Assert.AreSame(m_root, e4.Root);
+			Assert.AreSame(m_root, e5.Root);
+		}
 	}
 }
