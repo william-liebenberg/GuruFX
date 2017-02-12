@@ -57,7 +57,7 @@ namespace GuruFX.Core
 			ConstructorInfo ctor = itemType.GetConstructor(Type.EmptyTypes);
 			if (ctor == null)
 			{
-				throw new Exception("Compiled Expression Func already exists for id: " + id);
+				throw new Exception("Could not get Parameterless Constructor for type: " + itemType.FullName);
 			}
 
 			Func<TBaseObj> baseObjCreatorFunc = Expression.Lambda<Func<TBaseObj>>(Expression.New(ctor)).Compile();
