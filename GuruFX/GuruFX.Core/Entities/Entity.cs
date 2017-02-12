@@ -50,7 +50,7 @@ namespace GuruFX.Core.Entities
 		/// <summary>
 		/// Name of this Entity
 		/// </summary>
-		public string Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Instance GUID of this Entity
