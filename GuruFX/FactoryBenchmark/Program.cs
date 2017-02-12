@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using GuruFX.Core;
 using GuruFX.Core.Entities;
@@ -8,44 +7,16 @@ namespace FactoryBenchmark
 {
 	internal class Program
 	{
-		private static readonly string[] RandomNameValues = { "Bob", "Jane", "Ed", "Rob", "Glen" };
-		private static int _x = 0;
-		private static string RandomName()
-		{
-			++_x;
-			_x = _x % RandomNameValues.Length;
-			return RandomNameValues[_x];
-		}
-
-		private const int MaxRandomValues = 1000000;
-		private static readonly List<int> RandomValues = new List<int>(MaxRandomValues);
-		private static int _r = 0;
-
-		private static int RandomValue()
-		{
-			++_r;
-			_r = _r % RandomValues.Count;
-			return RandomValues[_r];
-		}
-
-		private static void InitRandomValues()
-		{
-			Random r = new Random();
-			for (int j = 0; j < MaxRandomValues; j++)
-			{
-				RandomValues.Add(r.Next(MaxRandomValues));
-			}
-		}
-
 		public interface ITestObject
 		{
-			string Name { get; set; }
+			int Value { get; set; }
 		}
 
 		public class TestObject : ITestObject
 		{
 			public TestObject()
 			{
+
 			}
 
 			public TestObject(string name)
@@ -53,82 +24,248 @@ namespace FactoryBenchmark
 				Name = name;
 			}
 
+			public TestObject(int val)
+			{
+				Value = val;
+			}
+
+			public int Value { get; set; } = 0;
+
 			public string Name { get; set; } = string.Empty;
 		}
 
 		private static void Main(string[] args)
 		{
-			InitRandomValues();
-
-
-			/*
-				TestObjectFactory Results: 
-					Warmup Iterations: 1000
-					Iterations: 500000
-
-												 FactoryFunc : 00:00:00.0276911
-										FactoryFunc_WithArgs : 00:00:00.0301806
-								   CompiledExpression<T>(id) : 00:00:00.0309615
-								CompiledExpression(id, type) : 00:00:00.0348999
-											  CreateInstance : 00:00:00.0277758
-									  CreateInstanceWithArgs : 00:00:00.5938680
-				
-				EntityFactory Results:
-					Warmup Iterations: 1000
-					Iterations: 500000
-
-												 FactoryFunc : 00:00:00.6093253
-										FactoryFunc_WithArgs : 00:00:00.6281512
-								   CompiledExpression<T>(id) : 00:00:00.6336916
-								CompiledExpression(id, type) : 00:00:00.6302690
-											  CreateInstance : 00:00:00.6294698
-									  CreateInstanceWithArgs : 00:00:04.5770215
-			
-			 
-			 Creating Entities is sooo much slower... perhaps the auto property initializers add to this.
-			 Perhaps using ConcurrentDictionary instead of just Dictionary is also slowing things down?
-			 */
-
-			BenchmarkTestObjectFactory();
-
-			BenchmarkEntityFactory();
-		}
-
-		private static void BenchmarkTestObjectFactory()
-		{
-			Factory<string, ITestObject> testObjectFactory = new Factory<string, ITestObject>();
-
-			// NOTE: Removed the FastActivator method -- lots of work compared to the CompiledExpression methods and it was slower anyways.
-			//componentFactory.Register_FastActivator<TestComponent>();
-
-			testObjectFactory.Register("FactoryFunc", () => new TestObject());
-			testObjectFactory.Register("FactoryFunc_WithArgs", () => new TestObject(RandomName()));
-			testObjectFactory.Register<TestObject>("CompiledExpression<T>(id)");
-			testObjectFactory.Register("CompiledExpression(id, type)", typeof(TestObject));
-			testObjectFactory.Register("CreateInstance", typeof(TestObject));
-			testObjectFactory.Register("CreateInstanceWithArgs", typeof(TestObject), () => new object[] { RandomName() });
-
-			const int warmupIterations = 1000;
-			const int iterations = 500000;
-
-			string[] creationMethods =
-			{
-				// "FastActivator",
-				"FactoryFunc",
-				"FactoryFunc_WithArgs",
-				"CompiledExpression<T>(id)",
-				"CompiledExpression(id, type)",
-				"CreateInstance",
-				"CreateInstanceWithArgs"
-			};
+			const int warmupIterations = 10000;
+			const int iterations = 5000000;
 
 			Console.WriteLine($"Warmup Iterations: {warmupIterations}");
 			Console.WriteLine($"Iterations: {iterations}");
 			Console.WriteLine();
 
+			RunNewTestObjectBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+			RunNewEntityBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+
+			RunNewTestObjectBenchmark<TestObject>(warmupIterations, iterations);
+			Console.WriteLine();
+			RunNewEntityBenchmark<Entity>(warmupIterations, iterations);
+			Console.WriteLine();
+
+			RunNewTestObjectFuncBenchmark(warmupIterations, iterations, () => new TestObject());
+			Console.WriteLine();
+			RunNewEntityFuncBenchmark(warmupIterations, iterations, () => new Entity());
+			Console.WriteLine();
+
+			RunTestObjectFactoryBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+			RunEntityFactoryBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+
+			RunTestObjectActivatorBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+			RunEntityActivatorBenchmark(warmupIterations, iterations);
+			Console.WriteLine();
+		}
+
+		private static void RunNewTestObjectBenchmark<T>(int warmupIterations, int iterations) where T : ITestObject, new()
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				T a = new T();
+				sum += a.Value;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				T a = new T();
+				sum += a.Value;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate Generic Type: {typeof(T).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunNewEntityBenchmark<T>(int warmupIterations, int iterations) where T : IEntity, new()
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				T a = new T();
+				sum += a.Name.Length;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				T a = new T();
+				sum += a.Name.Length;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate Generic Type: {typeof(T).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunNewTestObjectBenchmark(int warmupIterations, int iterations)
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				TestObject a = new TestObject();
+				sum += a.Value;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				TestObject a = new TestObject();
+				sum += a.Value;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate Type: {typeof(TestObject).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunNewEntityBenchmark(int warmupIterations, int iterations)
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				Entity a = new Entity();
+				sum += a.Name.Length;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				Entity a = new Entity();
+				sum += a.Name.Length;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate Type: {typeof(Entity).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunNewTestObjectFuncBenchmark(int warmupIterations, int iterations, Func<TestObject> func)
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				TestObject a = func();
+				sum += a.Value;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				TestObject a = func();
+				sum += a.Value;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate with Func Type: {typeof(TestObject).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunNewEntityFuncBenchmark(int warmupIterations, int iterations, Func<Entity> func)
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				Entity a = func();
+				sum += a.Name.Length;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				Entity a = func();
+				sum += a.Name.Length;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Allocate with Func Type: {typeof(Entity).FullName,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void RunTestObjectActivatorBenchmark(int warmupIterations, int iterations)
+		{
+			Activator<string, ITestObject> testObjectActivator = new Activator<string, ITestObject>();
+
+			Type t1 = typeof(TestObject);
+
+			//BenchmarkTestObjectActivator(t1, (k) => testObjectActivator.ActivateInstance(k), warmupIterations, iterations);
+			BenchmarkTestObjectActivator(t1, (k) => testObjectActivator.ActivateInstance(k, "Fred"), warmupIterations, iterations);
+		}
+
+		private static void RunEntityActivatorBenchmark(int warmupIterations, int iterations)
+		{
+			Activator<string, IEntity> testObjectActivator = new Activator<string, IEntity>();
+
+			Type e1 = typeof(Entity);
+
+			//BenchmarkEntityActivator(e1, (k) => testObjectActivator.ActivateInstance(k), warmupIterations, iterations);
+			BenchmarkEntityActivator(e1, (k) => testObjectActivator.ActivateInstance(k, "Fred"), warmupIterations, iterations);
+		}
+
+		private static void RunTestObjectFactoryBenchmark(int warmupIterations, int iterations)
+		{
+			Factory<string, ITestObject> testObjectFactory = new Factory<string, ITestObject>();
+
+			testObjectFactory.Register("Object_FactoryFunc", () => new TestObject());
+			testObjectFactory.Register("Object_FactoryFunc_WithArgs", () => new TestObject("Fred"));
+			testObjectFactory.Register("Object_CompiledExpression(id, type)", typeof(TestObject));
+
+			string[] creationMethods =
+			{
+				"Object_FactoryFunc",
+				"Object_FactoryFunc_WithArgs",
+				"Object_CompiledExpression(id, type)",
+			};
+
 			foreach (string creationMethod in creationMethods)
 			{
 				BenchmarkTestObjectCreationMethod(warmupIterations, testObjectFactory, creationMethod, iterations);
+			}
+		}
+
+		private static void RunEntityFactoryBenchmark(int warmupIterations, int iterations)
+		{
+			Factory<string, IEntity> entityFactory = new Factory<string, IEntity>();
+
+			entityFactory.Register("Entity_FactoryFunc", () => new Entity());
+			entityFactory.Register("Entity_FactoryFunc_WithArgs", () => new Entity("Fred"));
+			entityFactory.Register("Entity_CompiledExpression(id, type)", typeof(Entity));
+
+			string[] creationMethods =
+			{
+				"Entity_FactoryFunc",
+				"Entity_FactoryFunc_WithArgs",
+				"Entity_CompiledExpression(id, type)",
+			};
+
+			foreach (string creationMethod in creationMethods)
+			{
+				BenchmarkEntityCreationMethod(warmupIterations, entityFactory, creationMethod, iterations);
 			}
 		}
 
@@ -139,7 +276,7 @@ namespace FactoryBenchmark
 			for (int j = 0; j < warmupIterations; j++)
 			{
 				ITestObject a = factory.Create(creationMethod);
-				sum += a.Name.Length;
+				sum += a.Value;
 			}
 
 			// bench it
@@ -149,52 +286,12 @@ namespace FactoryBenchmark
 			for (int j = 0; j < iterations; j++)
 			{
 				ITestObject a = factory.Create(creationMethod);
-				sum += a.Name.Length;
+				sum += a.Value;
 			}
 			stopwatch.Stop();
 
 			Console.WriteLine($"{creationMethod,40} : {stopwatch.Elapsed}");
 		}
-
-		private static void BenchmarkEntityFactory()
-		{
-			Factory<string, IEntity> entityFactory = new Factory<string, IEntity>();
-
-			// NOTE: Removed the FastActivator method -- lots of work compared to the CompiledExpression methods and it was slower anyways.
-			//componentFactory.Register_FastActivator<TestComponent>();
-
-			entityFactory.Register("FactoryFunc", () => new Entity());
-			entityFactory.Register("FactoryFunc_WithArgs", () => new Entity(RandomName()));
-			entityFactory.Register<Entity>("CompiledExpression<T>(id)");
-			entityFactory.Register("CompiledExpression(id, type)", typeof(Entity));
-			entityFactory.Register("CreateInstance", typeof(Entity));
-			entityFactory.Register("CreateInstanceWithArgs", typeof(Entity), () => new object[] { RandomName() });
-
-			const int warmupIterations = 1000;
-			const int iterations = 500000;
-
-			string[] creationMethods =
-			{
-				// "FastActivator",
-				"FactoryFunc",
-				"FactoryFunc_WithArgs",
-				"CompiledExpression<T>(id)",
-				"CompiledExpression(id, type)",
-				"CreateInstance",
-				"CreateInstanceWithArgs"
-			};
-
-			Console.WriteLine($"Warmup Iterations: {warmupIterations}");
-			Console.WriteLine($"Iterations: {iterations}");
-			Console.WriteLine();
-
-			foreach (string creationMethod in creationMethods)
-			{
-				BenchmarkEntityCreationMethod(warmupIterations, entityFactory, creationMethod, iterations);
-			}
-		}
-
-
 
 		private static void BenchmarkEntityCreationMethod(int warmupIterations, Factory<string, IEntity> factory, string creationMethod, int iterations)
 		{
@@ -218,6 +315,52 @@ namespace FactoryBenchmark
 			stopwatch.Stop();
 
 			Console.WriteLine($"{creationMethod,40} : {stopwatch.Elapsed}");
+		}
+
+		private static void BenchmarkEntityActivator<TKeyType, TValueType>(TKeyType keyToActivate, Func<TKeyType, TValueType> factoryFunc, int warmupIterations, int iterations) where TValueType : IEntity
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				TValueType a = factoryFunc(keyToActivate);
+				sum += a.Name.Length;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				TValueType a = factoryFunc(keyToActivate);
+				sum += a.Name.Length;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Activate Type: {keyToActivate.ToString(),40} : {stopwatch.Elapsed}");
+		}
+
+		private static void BenchmarkTestObjectActivator<TItemType, TValueType>(TItemType itemTypeToActivate, Func<TItemType, TValueType> factoryFunc, int warmupIterations, int iterations) where TValueType : ITestObject
+		{
+			// warmup
+			int sum = 0;
+			for (int j = 0; j < warmupIterations; j++)
+			{
+				TValueType a = factoryFunc(itemTypeToActivate);
+				sum += a.Value;
+			}
+
+			// bench it
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			for (int j = 0; j < iterations; j++)
+			{
+				TValueType a = factoryFunc(itemTypeToActivate);
+				sum += a.Value;
+			}
+			stopwatch.Stop();
+
+			Console.WriteLine($"Activate Type: {itemTypeToActivate.ToString(),40} : {stopwatch.Elapsed}");
 		}
 	}
 }
