@@ -13,7 +13,7 @@ namespace GuruFX.Core
 		{
 			m_creationFuncs = new Dictionary<TKey, Func<TBaseObj>>();
 		}
-		
+
 		public TBaseObj Create(TKey id)
 		{
 			Func<TBaseObj> constructor;
@@ -24,7 +24,7 @@ namespace GuruFX.Core
 
 			throw new ArgumentException("No type registered for this ID");
 		}
-		
+
 		public void Register(TKey id, Func<TBaseObj> ctor)
 		{
 			Func<TBaseObj> f;
@@ -35,12 +35,17 @@ namespace GuruFX.Core
 
 			m_creationFuncs.Add(id, ctor);
 		}
-		
+
 		public void Register(TKey id, Type itemType)
 		{
 			if (itemType == null)
 			{
 				throw new ArgumentNullException(nameof(itemType), "ItemType cannot be invalid!");
+			}
+
+			if (itemType.IsInterface || itemType.IsAbstract || itemType.IsValueType || !typeof(TBaseObj).IsAssignableFrom(itemType))
+			{
+				throw new Exception("Cannot register this Type: " + itemType.FullName);
 			}
 
 			Func<TBaseObj> f;
