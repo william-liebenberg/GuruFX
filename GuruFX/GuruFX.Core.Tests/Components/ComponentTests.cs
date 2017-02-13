@@ -74,7 +74,7 @@ namespace GuruFX.Core.Tests.Components
 			IComponent c = m_component.CreateAndAddComponent<FakeComponent>();
 
 			// Find the Component using the Component itself
-			IComponent f = m_component.FindComponent(c, false);
+			IComponent f = m_component.FindComponent(c);
 
 			// Assert
 			Assert.IsNotNull(f);
@@ -91,7 +91,7 @@ namespace GuruFX.Core.Tests.Components
 			IComponent c = m_component.CreateAndAddComponent<FakeComponent>();
 
 			// Find the Component using the Component InstanceID
-			IComponent f = m_component.FindComponent(c.InstanceID, false);
+			IComponent f = m_component.FindComponent(c.InstanceID);
 
 			// Assert
 			Assert.IsNotNull(f);
@@ -105,13 +105,13 @@ namespace GuruFX.Core.Tests.Components
 		public void FindComponent_using_Component_Recurse()
 		{
 			// Create a new Entity
-			IEntity e = m_root.CreateAndAddEntity<Entity>();
+			GameObject e = m_root.CreateAndAddEntity<GameObject>();
 
 			// Create a new Component
 			IComponent c = e.CreateAndAddComponent<FakeComponent>();
 
 			// Find the Component from Root using the Component itself
-			IComponent f = m_component.FindComponent(c, true);
+			IComponent f = m_component.FindComponentFromChildren(c);
 
 			// Assert
 			Assert.IsNotNull(f);
@@ -126,13 +126,13 @@ namespace GuruFX.Core.Tests.Components
 		public void FindComponent_using_InstanceID_Recurse()
 		{
 			// Create a new Entity
-			IEntity e = m_root.CreateAndAddEntity<Entity>();
+			GameObject e = m_root.CreateAndAddEntity<GameObject>();
 
 			// Create a new Component
 			IComponent c = e.CreateAndAddComponent<FakeComponent>();
 
 			// Find the Component from Root using the Component InstanceID
-			IComponent f = m_component.FindComponent(c.InstanceID, true);
+			IComponent f = m_component.FindComponentFromChildren(c.InstanceID);
 
 			// Assert
 			Assert.IsNotNull(f);
@@ -146,9 +146,9 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RemoveEntity_using_Entity()
 		{
-			Entity e = m_component.CreateAndAddEntity<Entity>();
+			GameObject e = m_component.CreateAndAddEntity<GameObject>();
 			IEntity r = m_component.RemoveEntity(e);
-			IEntity f = m_component.FindEntity(r, false);
+			IEntity f = m_component.FindEntity(r);
 
 			Assert.IsNotNull(e);
 			Assert.IsNotNull(r);
@@ -159,9 +159,9 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RemoveEntity_using_InstanceID()
 		{
-			Entity e = m_component.CreateAndAddEntity<Entity>();
+			GameObject e = m_component.CreateAndAddEntity<GameObject>();
 			IEntity r = m_component.RemoveEntity(e.InstanceID);
-			IEntity f = m_component.FindEntity(r.InstanceID, false);
+			IEntity f = m_component.FindEntity(r.InstanceID);
 
 			Assert.IsNotNull(e);
 			Assert.IsNotNull(r);
@@ -174,7 +174,7 @@ namespace GuruFX.Core.Tests.Components
 		{
 			IComponent c = m_component.CreateAndAddComponent<FakeComponent>();
 			IComponent r = m_component.RemoveComponent(c);
-			IComponent f = m_component.FindComponent(r, false);
+			IComponent f = m_component.FindComponent(r);
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(r);
@@ -187,7 +187,7 @@ namespace GuruFX.Core.Tests.Components
 		{
 			IComponent c = m_component.CreateAndAddComponent<FakeComponent>();
 			IComponent r = m_component.RemoveComponent(c.InstanceID);
-			IComponent f = m_component.FindComponent(r.InstanceID, false);
+			IComponent f = m_component.FindComponent(r.InstanceID);
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(r);
@@ -361,7 +361,7 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RootTest_1()
 		{
-			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			GameObject e1 = m_component.CreateAndAddEntity<GameObject>();
 
 			Assert.AreSame(m_root, e1.Root);
 		}
@@ -369,9 +369,9 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RootTest_2()
 		{
-			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			GameObject e1 = m_component.CreateAndAddEntity<GameObject>();
 			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
-			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			GameObject e2 = c1.CreateAndAddEntity<GameObject>();
 
 			Assert.AreSame(m_root, e1.Root);
 			Assert.AreSame(m_root, c1.Parent.Root);
@@ -381,11 +381,11 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RootTest_3()
 		{
-			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			GameObject e1 = m_component.CreateAndAddEntity<GameObject>();
 			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
-			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			GameObject e2 = c1.CreateAndAddEntity<GameObject>();
 			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
-			Entity e3 = c2.CreateAndAddEntity<Entity>();
+			GameObject e3 = c2.CreateAndAddEntity<GameObject>();
 
 			Assert.AreSame(m_root, e1.Root);
 			Assert.AreSame(m_root, c1.Parent.Root);
@@ -397,13 +397,13 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RootTest_4()
 		{
-			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			GameObject e1 = m_component.CreateAndAddEntity<GameObject>();
 			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
-			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			GameObject e2 = c1.CreateAndAddEntity<GameObject>();
 			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
-			Entity e3 = c2.CreateAndAddEntity<Entity>();
+			GameObject e3 = c2.CreateAndAddEntity<GameObject>();
 			FakeComponent c3 = e3.CreateAndAddComponent<FakeComponent>();
-			Entity e4 = c3.CreateAndAddEntity<Entity>();
+			GameObject e4 = c3.CreateAndAddEntity<GameObject>();
 
 			Assert.AreSame(m_root, e1.Root);
 			Assert.AreSame(m_root, c1.Parent.Root);
@@ -417,15 +417,15 @@ namespace GuruFX.Core.Tests.Components
 		[TestMethod]
 		public void RootTest_5()
 		{
-			Entity e1 = m_component.CreateAndAddEntity<Entity>();
+			GameObject e1 = m_component.CreateAndAddEntity<GameObject>();
 			FakeComponent c1 = e1.CreateAndAddComponent<FakeComponent>();
-			Entity e2 = c1.CreateAndAddEntity<Entity>();
+			GameObject e2 = c1.CreateAndAddEntity<GameObject>();
 			FakeComponent c2 = e2.CreateAndAddComponent<FakeComponent>();
-			Entity e3 = c2.CreateAndAddEntity<Entity>();
+			GameObject e3 = c2.CreateAndAddEntity<GameObject>();
 			FakeComponent c3 = e3.CreateAndAddComponent<FakeComponent>();
-			Entity e4 = c3.CreateAndAddEntity<Entity>();
+			GameObject e4 = c3.CreateAndAddEntity<GameObject>();
 			FakeComponent c4 = e4.CreateAndAddComponent<FakeComponent>();
-			Entity e5 = c4.CreateAndAddEntity<Entity>();
+			GameObject e5 = c4.CreateAndAddEntity<GameObject>();
 
 			Assert.AreSame(m_root, e1.Root);
 			Assert.AreSame(m_root, c1.Parent.Root);

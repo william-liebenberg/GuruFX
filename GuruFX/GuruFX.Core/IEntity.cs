@@ -8,7 +8,7 @@ namespace GuruFX.Core
 		ConcurrentDictionary<Guid, IComponent> Components { get; set; }
 		ConcurrentDictionary<Guid, IEntity> Entities { get; set; }
 		Guid InstanceID { get; set; }
-		string Name { get; set; }
+		string Name { get; }
 		IEntity Parent { get; set; }
 
 		// TODO: Write tests for "Inactive" Entities

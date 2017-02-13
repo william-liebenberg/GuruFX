@@ -1,8 +1,8 @@
 ﻿namespace GuruFX.Core
 {
-	public interface ISystem : IUpdateable
+	public interface ISystem
 	{
-		string Name { get; set; }
+		string Name { get; }
 		void Init();
 		void Destroy();
 	}

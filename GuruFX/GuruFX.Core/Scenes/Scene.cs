@@ -1,21 +1,46 @@
-﻿using System;
-using System.Collections.Concurrent;
-using GuruFX.Core.Entities;
+﻿using GuruFX.Core.Entities;
+using GuruFX.Core.SystemComponents;
 
 namespace GuruFX.Core.Scenes
 {
-	public class Scene : IScene
+	public class Scene : Entity, ISystem, IUpdateable
 	{
-		public ConcurrentDictionary<Guid, ISystem> Systems { get; set; } = new ConcurrentDictionary<Guid, ISystem>();
+		public double LastElapsedTime { get; set; }
 
-		public IEntity Root { get; } = new Entity("Scene Root");
+		public override string Name { get; set; } = "Scene";
 
-		public IEntity FindEntity(IEntity entity) => Root.FindEntity(entity, true);
+		public void Init()
+		{
 
-		public IEntity FindEntity(Guid instanceID) => Root.FindEntity(instanceID, true);
+		}
 
-		public IEntity RemoveEntity(IEntity entity) => Root.RemoveEntity(entity);
+		public void Destroy()
+		{
 
-		public IEntity RemoveEntity(Guid instanceID) => Root.RemoveEntity(instanceID);
+		}
+
+		/// <summary>
+		/// Update all the Scene System Components
+		/// </summary>
+		/// <param name="elapsedTime">TODO: WL@</param>
+		/// <param name="deltaTime">TODO: WL@</param>
+		public void Update(double elapsedTime, double deltaTime)
+		{
+			this.LastElapsedTime = elapsedTime;
+
+			// ok.. so each scene has to go through its "System Components" and Update them
+			// the Scene itself does not update/process the entities that it owns.
+			// It is up to this Scene's "System Components" to deal with all the entities and their components
+
+			SystemComponent[] systemComponents = GetComponentsFromChildren<SystemComponent>();
+
+			if (systemComponents != null)
+			{
+				foreach (var systemComponent in systemComponents)
+				{
+					systemComponent.Update(elapsedTime, deltaTime);
+				}
+			}
+		}
 	}
 }

@@ -50,12 +50,12 @@ namespace FactoryBenchmark
 
 			RunNewTestObjectBenchmark<TestObject>(warmupIterations, iterations);
 			Console.WriteLine();
-			RunNewEntityBenchmark<Entity>(warmupIterations, iterations);
+			RunNewEntityBenchmark<GameObject>(warmupIterations, iterations);
 			Console.WriteLine();
 
 			RunNewTestObjectFuncBenchmark(warmupIterations, iterations, () => new TestObject());
 			Console.WriteLine();
-			RunNewEntityFuncBenchmark(warmupIterations, iterations, () => new Entity());
+			RunNewEntityFuncBenchmark(warmupIterations, iterations, () => new GameObject());
 			Console.WriteLine();
 
 			RunTestObjectFactoryBenchmark(warmupIterations, iterations);
@@ -144,7 +144,7 @@ namespace FactoryBenchmark
 			int sum = 0;
 			for (int j = 0; j < warmupIterations; j++)
 			{
-				Entity a = new Entity();
+				GameObject a = new GameObject();
 				sum += a.Name.Length;
 			}
 
@@ -153,12 +153,12 @@ namespace FactoryBenchmark
 			stopwatch.Start();
 			for (int j = 0; j < iterations; j++)
 			{
-				Entity a = new Entity();
+				GameObject a = new GameObject();
 				sum += a.Name.Length;
 			}
 			stopwatch.Stop();
 
-			Console.WriteLine($"Allocate Type: {typeof(Entity).FullName,40} : {stopwatch.Elapsed}");
+			Console.WriteLine($"Allocate Type: {typeof(GameObject).FullName,40} : {stopwatch.Elapsed}");
 		}
 
 		private static void RunNewTestObjectFuncBenchmark(int warmupIterations, int iterations, Func<TestObject> func)
@@ -252,9 +252,9 @@ namespace FactoryBenchmark
 		{
 			Factory<string, IEntity> entityFactory = new Factory<string, IEntity>();
 
-			entityFactory.Register("Entity_FactoryFunc", () => new Entity());
-			entityFactory.Register("Entity_FactoryFunc_WithArgs", () => new Entity("Fred"));
-			entityFactory.Register("Entity_CompiledExpression(id, type)", typeof(Entity));
+			entityFactory.Register("Entity_FactoryFunc", () => new GameObject());
+			entityFactory.Register("Entity_FactoryFunc_WithArgs", () => new GameObject("Fred"));
+			entityFactory.Register("Entity_CompiledExpression(id, type)", typeof(GameObject));
 
 			string[] creationMethods =
 			{

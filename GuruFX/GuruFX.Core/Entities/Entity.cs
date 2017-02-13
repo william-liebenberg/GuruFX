@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GuruFX.Core.Entities
 {
-	public class Entity : IEntity
+	public abstract class Entity : IEntity
 	{
 		#region CONSTRUCTORS
 
@@ -13,10 +13,18 @@ namespace GuruFX.Core.Entities
 		{
 
 		}
-
-		public Entity(string name)
+		
+		/// <summary>
+		/// Create a new Entity with list of Instantiated Components
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="componentTypes"></param>
+		public Entity(params Type[] componentTypes)
 		{
-			Name = name;
+			foreach (Type componentType in componentTypes)
+			{
+				CreateAndAddComponentOfType(componentType);
+			}
 		}
 
 		/// <summary>
@@ -24,12 +32,11 @@ namespace GuruFX.Core.Entities
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="componentTypes"></param>
-		public Entity(string name, params Type[] componentTypes)
-			: this(name)
+		public Entity(params IComponent[] components)
 		{
-			foreach (Type componentType in componentTypes)
+			foreach (IComponent component in components)
 			{
-				CreateAndAddComponentOfType(componentType);
+				AddComponent(component);
 			}
 		}
 
@@ -50,7 +57,7 @@ namespace GuruFX.Core.Entities
 		/// <summary>
 		/// Name of this Entity
 		/// </summary>
-		public string Name { get; set; } = string.Empty;
+		public abstract string Name { get; set; }
 
 		/// <summary>
 		/// Instance GUID of this Entity
@@ -75,6 +82,12 @@ namespace GuruFX.Core.Entities
 		#endregion PROPERTIES
 
 		#region ENTITY METHODS
+
+		/// <summary>
+		/// Return an array of all the Child Entities for this Entity.
+		/// </summary>
+		/// <returns>All the child entities.</returns>
+		public IEntity[] GetEntities() => Entities?.Values?.ToArray();
 
 		/// <summary>
 		/// Create and Add a new Child Entity of type <typeparamref name="T"/> to this Entity
@@ -110,7 +123,7 @@ namespace GuruFX.Core.Entities
 		/// <exception cref="Exception">If the given entity could not be added to the child container of this entity.</exception>
 		public bool AddEntity(IEntity entity)
 		{
-			IEntity existingEntity = FindEntity(entity.InstanceID, true);
+			IEntity existingEntity = FindEntityFromChildren(entity.InstanceID);
 
 			if (existingEntity != null)
 			{
@@ -136,24 +149,22 @@ namespace GuruFX.Core.Entities
 		/// Find the child entity.
 		/// </summary>
 		/// <param name="entity">The child entity to find.</param>
-		/// <param name="recurse">Recurse into child entities to find the specified entity.</param>
-		/// <returns>The given entity, otherwise if the entity was not found to be a child of this entity then null is returned.</returns>
-		public IEntity FindEntity(IEntity entity, bool recurse)
+		/// <returns>The given entity is returned if it is a child of this entity, otherwise null is returned.</returns>
+		public IEntity FindEntity(IEntity entity)
 		{
 			if (entity == null)
 			{
 				throw new ArgumentNullException(nameof(entity), "Cannot find invalid Entities");
 			}
-			return FindEntity(entity.InstanceID, recurse);
+			return FindEntity(entity.InstanceID);
 		}
 
 		/// <summary>
 		/// Find a child entity via its InstanceID.
 		/// </summary>
 		/// <param name="instanceID">The instanceID of the child entity to find.</param>
-		/// <param name="recurse">Recurse into child entities to find the specified entity.</param>
 		/// <returns>If found the child entity, otherwise null.</returns>
-		public IEntity FindEntity(Guid instanceID, bool recurse)
+		public IEntity FindEntity(Guid instanceID)
 		{
 			IEntity entity;
 			if (Entities.TryGetValue(instanceID, out entity))
@@ -161,14 +172,42 @@ namespace GuruFX.Core.Entities
 				return entity;
 			}
 
-			if (recurse)
+			return null;
+		}
+
+		/// <summary>
+		/// TODO: WL@
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public IEntity FindEntityFromChildren(IEntity entity)
+		{
+			if (entity == null)
 			{
-				foreach (IEntity child in Entities.Values)
+				throw new ArgumentNullException(nameof(entity), "Cannot find invalid Entities");
+			}
+			return FindEntityFromChildren(entity.InstanceID);
+		}
+
+		/// <summary>
+		/// TODO: WL@
+		/// </summary>
+		/// <param name="instanceID"></param>
+		/// <param name="recurse"></param>
+		/// <returns></returns>
+		public IEntity FindEntityFromChildren(Guid instanceID)
+		{
+			IEntity entity;
+			if (Entities.TryGetValue(instanceID, out entity))
+			{
+				return entity;
+			}
+
+			foreach (IEntity child in Entities.Values)
+			{
+				if ((entity = child.FindEntityFromChildren(instanceID)) != null)
 				{
-					if ((entity = child.FindEntity(instanceID, true)) != null)
-					{
-						return entity;
-					}
+					return entity;
 				}
 			}
 
@@ -205,8 +244,13 @@ namespace GuruFX.Core.Entities
 
 		#endregion ENTITY METHODS
 
-
 		#region COMPONENT METHODS
+		
+		/// <summary>
+		/// Return an array of all the Components for this Entity.
+		/// </summary>
+		/// <returns>All the Components.</returns>
+		public IComponent[] GetComponents() => Components?.Values?.ToArray();
 
 		public T CreateAndAddComponent<T>() where T : class, IComponent, new() => (T)CreateAndAddComponentOfType(typeof(T));
 
@@ -221,6 +265,11 @@ namespace GuruFX.Core.Entities
 			return component == null ? null : (AddComponent(component) == false ? null : component);
 		}
 
+		/// <summary>
+		/// TODO: WL@
+		/// </summary>
+		/// <param name="component"></param>
+		/// <returns></returns>
 		public bool AddComponent(IComponent component)
 		{
 			if (component == null)
@@ -228,7 +277,7 @@ namespace GuruFX.Core.Entities
 				throw new ArgumentNullException(nameof(component), "Cannot add invalid Components to an Entity");
 			}
 
-			IComponent existingComponent = FindComponent(component, true);
+			IComponent existingComponent = FindComponentFromChildren(component);
 
 			if (existingComponent != null)
 			{
@@ -253,6 +302,30 @@ namespace GuruFX.Core.Entities
 			return true;
 		}
 
+		/// <summary>
+		/// TODO: WL@
+		/// </summary>
+		/// <param name="components"></param>
+		/// <returns></returns>
+		public bool AddComponents(params IComponent[] components)
+		{
+			if(components == null)
+			{
+				return false;
+			}
+
+			bool errors = false;
+			foreach(IComponent component in components)
+			{
+				if(!AddComponent(component))
+				{
+					errors = true;
+				}
+			}
+
+			return !errors;
+		}
+
 		public IComponent RemoveComponent(IComponent component)
 		{
 			if (component == null)
@@ -270,17 +343,17 @@ namespace GuruFX.Core.Entities
 			return Components.TryRemove(instanceID, out removedComponent) ? removedComponent : null;
 		}
 
-		public IComponent FindComponent(IComponent component, bool recurse)
+		public IComponent FindComponent(IComponent component)
 		{
 			if (component == null)
 			{
 				throw new ArgumentNullException(nameof(component), "Cannot find invalid Components");
 			}
 
-			return FindComponent(component.InstanceID, recurse);
+			return FindComponent(component.InstanceID);
 		}
 
-		public IComponent FindComponent(Guid instanceID, bool recurse)
+		public IComponent FindComponent(Guid instanceID)
 		{
 			IComponent component;
 
@@ -289,52 +362,31 @@ namespace GuruFX.Core.Entities
 				return component;
 			}
 
-			if (recurse)
-			{
-				foreach (IEntity child in Entities.Values)
-				{
-					if ((component = child.FindComponent(instanceID, true)) != null)
-					{
-						return component;
-					}
-				}
-			}
-
 			return null;
 		}
 
-		/// <summary>
-		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
-		/// </summary>
-		/// <typeparam name="T">The type of Component to return.</typeparam>
-		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponent<T>()
-			where T : IComponent => GetComponent<T>((IComponent)null);
-
-		/// <summary>
-		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
-		/// </summary>
-		/// <typeparam name="T">The type of Component to return.</typeparam>
-		/// <param name="excludedComponent">The component to exclude from the search.</param>
-		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponent<T>(IComponent excludedComponent)
-			where T : IComponent => GetComponent<T>(new[] { excludedComponent });
-
-		/// <summary>
-		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
-		/// </summary>
-		/// <typeparam name="T">The type of Component to return.</typeparam>
-		/// <param name="excludedComponents">The components to exclude from the search.</param>
-		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponent<T>(IComponent[] excludedComponents)
-			where T : IComponent
+		public IComponent FindComponentFromChildren(IComponent component)
 		{
-			Type searchType = typeof(T);
-
-			foreach (Guid key in Components.Keys)
+			if (component == null)
 			{
-				IComponent component = FindComponent(key, false);
-				if (component != null && !excludedComponents.Contains(component) && component.GetType() == searchType)
+				throw new ArgumentNullException(nameof(component), "Cannot find invalid Components");
+			}
+
+			return FindComponentFromChildren(component.InstanceID);
+		}
+
+		public IComponent FindComponentFromChildren(Guid instanceID)
+		{
+			IComponent component;
+
+			if (Components.TryGetValue(instanceID, out component))
+			{
+				return component;
+			}
+
+			foreach (IEntity child in Entities.Values)
+			{
+				if ((component = child.FindComponent(instanceID)) != null)
 				{
 					return component;
 				}
@@ -344,12 +396,57 @@ namespace GuruFX.Core.Entities
 		}
 
 		/// <summary>
+		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">The type of Component to return.</typeparam>
+		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
+		public T GetComponent<T>()
+			where T : class, IComponent => GetComponent<T>((T)null);
+
+		/// <summary>
+		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">The type of Component to return.</typeparam>
+		/// <param name="excludedComponent">The component to exclude from the search.</param>
+		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
+		public T GetComponent<T>(IComponent excludedComponent)
+			where T : class, IComponent => GetComponent<T>(new[] { excludedComponent });
+
+		/// <summary>
+		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">The type of Component to return.</typeparam>
+		/// <param name="excludedComponents">The components to exclude from the search.</param>
+		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
+		public T GetComponent<T>(IComponent[] excludedComponents)
+			where T : class, IComponent
+		{
+			Type searchType = typeof(T);
+
+			foreach (Guid key in Components.Keys)
+			{
+				IComponent component = FindComponent(key);
+				
+				if (component != null && !excludedComponents.Contains(component))
+				{
+					T castComponent = component as T;
+					if (castComponent != null)
+					{
+						return castComponent;
+					}
+				}
+			}
+
+			return default(T);
+		}
+
+		/// <summary>
 		/// Get the list of components from this entity that match the type <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponents<T>()
-			where T : IComponent => GetComponents<T>((IComponent)null);
+		public T[] GetComponents<T>()
+			where T : class, IComponent => GetComponents<T>((T)null);
 
 		/// <summary>
 		/// Get the list of components from this entity that match the type <typeparamref name="T"/>.
@@ -357,8 +454,8 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponents<T>(IComponent excludedComponent)
-			where T : IComponent => GetComponents<T>(new[] { excludedComponent });
+		public T[] GetComponents<T>(IComponent excludedComponent)
+			where T : class, IComponent => GetComponents<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the list of components from this entity that match the type <typeparamref name="T"/>.
@@ -366,27 +463,30 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponents">The components to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponents<T>(IComponent[] excludedComponents)
-			where T : IComponent
+		public T[] GetComponents<T>(IComponent[] excludedComponents)
+			where T : class, IComponent
 		{
-			Type searchType = typeof(T);
-			List<IComponent> foundComponents = new List<IComponent>();
+			List<T> foundComponents = new List<T>();
 
 			foreach (Guid instanceID in Components.Keys)
 			{
-				IComponent component = FindComponent(instanceID, false);
+				IComponent component = FindComponent(instanceID);
 				if (component == null)
 				{
 					continue;
 				}
 
-				if (!excludedComponents.Contains(component) && component.GetType() == searchType)
+				if (!excludedComponents.Contains(component))
 				{
-					foundComponents.Add(component);
+					T castComponent = component as T;
+					if (castComponent != null)
+					{
+						foundComponents.Add(castComponent);
+					}
 				}
 			}
 
-			return foundComponents.Count > 0 ? foundComponents.ToArray() : null;
+			return foundComponents.Count > 0 ? foundComponents.ToArray() : default(T[]);
 		}
 
 		/// <summary>
@@ -394,8 +494,8 @@ namespace GuruFX.Core.Entities
 		/// </summary>
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromParents<T>()
-			where T : IComponent => GetComponentFromParents<T>((IComponent[])null);
+		public T GetComponentFromParents<T>()
+			where T : class, IComponent => GetComponentFromParents<T>((T[])null);
 
 		/// <summary>
 		/// Get the first component from this entity, and if none are found on this entity then search through active Parents.
@@ -403,8 +503,8 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromParents<T>(IComponent excludedComponent)
-			where T : IComponent => GetComponentFromParents<T>(new[] { excludedComponent });
+		public T GetComponentFromParents<T>(IComponent excludedComponent)
+			where T : class, IComponent => GetComponentFromParents<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the first component from this entity, and if none are found on this entity then search through active Parents.
@@ -412,10 +512,10 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponents">The components to exclude from the search.</param>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromParents<T>(IComponent[] excludedComponents)
-			where T : IComponent
+		public T GetComponentFromParents<T>(IComponent[] excludedComponents)
+			where T : class, IComponent
 		{
-			IComponent component = GetComponent<T>(excludedComponents);
+			T component = GetComponent<T>(excludedComponents);
 
 			if (component == null && Parent != null && Parent.IsActive)
 			{
@@ -430,8 +530,8 @@ namespace GuruFX.Core.Entities
 		/// </summary>
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromParents<T>()
-			where T : IComponent => GetComponentsFromParents<T>((IComponent[])null);
+		public T[] GetComponentsFromParents<T>()
+			where T : class, IComponent => GetComponentsFromParents<T>((T[])null);
 
 		/// <summary>
 		/// Get the list of components from this entity and active Parents.
@@ -439,8 +539,8 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromParents<T>(IComponent excludedComponent)
-			where T : IComponent => GetComponentsFromParents<T>(new[] { excludedComponent });
+		public T[] GetComponentsFromParents<T>(IComponent excludedComponent)
+			where T : class, IComponent => GetComponentsFromParents<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the list of components from this entity and active Parents.
@@ -448,11 +548,11 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponents">The components to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromParents<T>(IComponent[] excludedComponents)
-			where T : IComponent
+		public T[] GetComponentsFromParents<T>(IComponent[] excludedComponents)
+			where T : class, IComponent
 		{
-			List<IComponent> foundComponents = new List<IComponent>();
-			IComponent[] myComponents;
+			List<T> foundComponents = new List<T>();
+			T[] myComponents;
 
 			if ((myComponents = GetComponents<T>(excludedComponents)) != null)
 			{
@@ -461,7 +561,7 @@ namespace GuruFX.Core.Entities
 
 			if (Parent != null && Parent.IsActive)
 			{
-				IComponent[] parentComponents;
+				T[] parentComponents;
 				if ((parentComponents = Parent.GetComponents<T>(excludedComponents)) != null)
 				{
 					foundComponents.AddRange(parentComponents);
@@ -476,7 +576,8 @@ namespace GuruFX.Core.Entities
 		/// </summary>
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromChildren<T>() where T : IComponent => GetComponentFromChildren<T>((IComponent)null);
+		public T GetComponentFromChildren<T>() 
+			where T : class, IComponent => GetComponentFromChildren<T>((T)null);
 
 		/// <summary>
 		/// Get the first component from this entity, and if none are found on this entity then search through active Children.
@@ -484,7 +585,8 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromChildren<T>(IComponent excludedComponent) where T : IComponent => GetComponentFromChildren<T>(new[] { excludedComponent });
+		public T GetComponentFromChildren<T>(IComponent excludedComponent) 
+			where T : class, IComponent => GetComponentFromChildren<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the first component from this entity, and if none are found on this entity then search through active Children.
@@ -492,9 +594,10 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponents">The components to exclude from the search.</param>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public IComponent GetComponentFromChildren<T>(IComponent[] excludedComponents) where T : IComponent
+		public T GetComponentFromChildren<T>(IComponent[] excludedComponents) 
+			where T : class, IComponent
 		{
-			IComponent myComponent;
+			T myComponent;
 
 			if ((myComponent = GetComponent<T>(excludedComponents)) != null)
 			{
@@ -512,7 +615,7 @@ namespace GuruFX.Core.Entities
 						continue;
 					}
 
-					IComponent childComponent;
+					T childComponent;
 					if ((childComponent = childEntity.GetComponentFromChildren<T>(excludedComponents)) != null)
 					{
 						return childComponent;
@@ -528,7 +631,8 @@ namespace GuruFX.Core.Entities
 		/// </summary>
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromChildren<T>() where T : IComponent => GetComponentsFromChildren<T>((IComponent)null);
+		public T[] GetComponentsFromChildren<T>() 
+			where T : class, IComponent => GetComponentsFromChildren<T>((T)null);
 
 		/// <summary>
 		/// Get the list of components from this entity and active Children.
@@ -536,8 +640,8 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromChildren<T>(IComponent excludedComponent)
-			where T : IComponent => GetComponentsFromChildren<T>(new[] { excludedComponent });
+		public T[] GetComponentsFromChildren<T>(IComponent excludedComponent)
+			where T : class, IComponent => GetComponentsFromChildren<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the list of components from this entity and active Children.
@@ -545,11 +649,11 @@ namespace GuruFX.Core.Entities
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponents">The components to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
-		public IComponent[] GetComponentsFromChildren<T>(IComponent[] excludedComponents)
-			where T : IComponent
+		public T[] GetComponentsFromChildren<T>(IComponent[] excludedComponents)
+			where T : class, IComponent
 		{
-			List<IComponent> foundComponents = new List<IComponent>();
-			IComponent[] myComponents;
+			List<T> foundComponents = new List<T>();
+			T[] myComponents;
 
 			if ((myComponents = GetComponents<T>(excludedComponents)) != null)
 			{
@@ -567,7 +671,7 @@ namespace GuruFX.Core.Entities
 						continue;
 					}
 
-					IComponent[] childComponents;
+					T[] childComponents;
 					if ((childComponents = childEntity.GetComponentsFromChildren<T>(excludedComponents)) != null)
 					{
 						foundComponents.AddRange(childComponents);
@@ -575,7 +679,7 @@ namespace GuruFX.Core.Entities
 				}
 			}
 
-			return foundComponents.Count > 0 ? foundComponents.ToArray() : null;
+			return foundComponents.Count > 0 ? foundComponents.ToArray() : default(T[]);
 		}
 
 		#endregion COMPONENT METHODS
