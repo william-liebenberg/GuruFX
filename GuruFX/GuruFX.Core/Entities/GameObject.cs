@@ -4,8 +4,6 @@ namespace GuruFX.Core.Entities
 {
 	public class GameObject : Entity
 	{
-		//public override string Name => "Game Object";
-
 		public override string Name { get; set; } = "Game Object";
 
 		public double LastElapsedTime { get; set; }
