@@ -41,18 +41,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activator.cs" />
-    <Compile Include="ComponentExtensions.cs" />
+    <Compile Include="Components\ComponentExtensions.cs" />
     <Compile Include="Components\Behaviour.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\Transform.cs" />
     <Compile Include="Entities\GameObject.cs" />
-    <Compile Include="EntityExtensions.cs" />
+    <Compile Include="Entities\EntityExtensions.cs" />
+    <Compile Include="IBaseObject.cs" />
+    <Compile Include="Scenes\SceneExtensions.cs" />
     <Compile Include="SystemComponents\SceneRenderer.cs" />
     <Compile Include="SystemComponents\SceneUpdater.cs" />
     <Compile Include="SystemComponents\SystemComponent.cs" />
     <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Extensions\ComponentExtensions.cs" />
-    <Compile Include="Extensions\EntityExtensions.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="IComponent.cs" />
     <Compile Include="IEntity.cs" />

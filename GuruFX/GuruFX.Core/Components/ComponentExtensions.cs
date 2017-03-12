@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using GuruFX.Core.Entities;
 
-namespace GuruFX.Core
+namespace GuruFX.Core.Components
 {
 	/// <summary>
 	/// TODO: DOCUMENT ALL THE THINGS
 	/// </summary>
 	public static class ComponentExtensions
 	{
-		public static IEntity[] GetEntities(this IComponent parent) => parent.Parent?.GetEntities();
+		public static IEnumerable<IEntity> GetEntities(this IComponent parent) => parent.Parent?.GetEntities();
 
-		public static IComponent[] GetComponents(this IComponent parent) => parent.Parent.GetComponents();
+		public static IEnumerable<IComponent> GetComponents(this IComponent parent) => parent.Parent.GetComponents();
 
 		#region ENTITY
 

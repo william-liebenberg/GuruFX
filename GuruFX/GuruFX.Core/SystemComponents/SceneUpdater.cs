@@ -1,9 +1,12 @@
-﻿namespace GuruFX.Core.SystemComponents
+﻿using System.Collections.Generic;
+using GuruFX.Core.Entities;
+
+namespace GuruFX.Core.SystemComponents
 {
 	public class SceneUpdater : SystemComponent
 	{
 		public override string Name => "Scene Updater";
-
+		
 		public override void Init()
 		{
 
@@ -23,11 +26,11 @@
 		/// <param name="deltaTime">Time passed since last Update</param>
 		public override void Update(double elapsedTime, double deltaTime)
 		{
-			IEntity[] entities = this.Parent.GetEntities();
+			IEnumerable<IEntity> entities = this.Parent.GetEntities();
 			UpdateEntities(entities, elapsedTime, deltaTime);
 		}
 
-		protected void UpdateEntities(IEntity[] entities, double elapsedTime, double deltaTime)
+		protected void UpdateEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
 		{
 			if(entities == null)
 			{
@@ -46,8 +49,8 @@
 			{
 				return;
 			}
-			
-			IComponent[] components = entity.GetComponents();
+
+			IEnumerable<IComponent> components = entity.GetComponents();
 
 			// update all the Components
 			UpdateComponents(components, elapsedTime, deltaTime);
@@ -56,7 +59,7 @@
 			UpdateEntities(entity.GetEntities(), elapsedTime, deltaTime);
 		}
 
-		protected void UpdateComponents(IComponent[] components, double elapsedTime, double deltaTime)
+		protected void UpdateComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
 		{
 			if(components == null)
 			{
@@ -65,8 +68,7 @@
 
 			foreach(IComponent component in components)
 			{
-				IUpdateable updateableComponent = component as IUpdateable;
-				if(updateableComponent != null)
+				if(component is IUpdateable updateableComponent)
 				{
 					updateableComponent.Update(elapsedTime, deltaTime);
 					++EntitiesUpdated;

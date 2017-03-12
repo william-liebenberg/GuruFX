@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GuruFX.Core.Entities
 {
 	public abstract class Entity : IEntity
 	{
-		#region PROPERTIES
-
 		/// <summary>
 		/// Dictionary of Components. Key = ComponentInstanceID, Value = Component
 		/// </summary>
@@ -48,7 +44,5 @@ namespace GuruFX.Core.Entities
 		/// The Entity can be set to Active or Inactive.
 		/// </summary>
 		public bool IsActive { get; set; } = true;
-
-		#endregion PROPERTIES
 	}
 }

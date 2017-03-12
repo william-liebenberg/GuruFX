@@ -1,6 +1,6 @@
 ﻿namespace GuruFX.Core
 {
-	public interface IUpdateable
+	public interface IUpdateable : IBaseObject
 	{
 		double LastElapsedTime { get; set; }
 

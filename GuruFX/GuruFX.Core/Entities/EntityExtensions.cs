@@ -2,23 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GuruFX.Core
+namespace GuruFX.Core.Entities
 {
 	public static class EntityExtensions
 	{
+		// TODO: Benchmark IEnumerable<IEntity> vs IEntity[]
+		// public static IEntity[] GetEntities(this IEntity parent) => parent.Entities?.Values?.ToArray();
+
+		// TODO: Benchmark IEnumerable<IComponent> vs IComponent[]
+		// public static IComponent[] GetComponents(this IEntity parent) => parent.Components?.Values?.ToArray();
+
 		/// <summary>
 		/// Return an array of all the Child Entities for this Entity.
 		/// </summary>
 		/// <returns>All the child entities.</returns>
-		public static IEntity[] GetEntities(this IEntity parent) => parent.Entities?.Values?.ToArray();
-
+		public static IEnumerable<IEntity> GetEntities(this IEntity parent) => parent.Entities?.Values ?? null;
+		
 		/// <summary>
 		/// Return an array of all the Components for this Entity.
 		/// </summary>
 		/// <returns>All the Components.</returns>
-		public static IComponent[] GetComponents(this IEntity parent) => parent.Components?.Values?.ToArray();
-
-
+		public static IEnumerable<IComponent> GetComponents(this IEntity parent) => parent.Components?.Values ?? null;
+		
 		#region ENTITY
 
 		/// <summary>
@@ -293,7 +298,7 @@ namespace GuruFX.Core
 		/// <typeparam name="T">The type of Component to return.</typeparam>
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>If found the first component of type <typeparamref name="T"/>, otherwise null.</returns>
-		public static T GetComponent<T>(this IEntity parent, IComponent excludedComponent) where T : class, IComponent => parent.GetComponent<T>(new[] { excludedComponent	});
+		public static T GetComponent<T>(this IEntity parent, IComponent excludedComponent) where T : class, IComponent => parent.GetComponent<T>(new[] { excludedComponent });
 
 		/// <summary>
 		/// Get the first component from this entity that match the type <typeparamref name="T"/>.
@@ -419,7 +424,7 @@ namespace GuruFX.Core
 		/// <param name="excludedComponent">The component to exclude from the search.</param>
 		/// <returns>The list of components of type <typeparamref name="T"/>, otherwise if none are found then null is returned.</returns>
 		public static T[] GetComponents<T>(this IEntity parent, IComponent excludedComponent) where T : class, IComponent => parent.GetComponents<T>(new[] { excludedComponent });
-		
+
 		/// <summary>
 		/// Get the list of components from this entity that match the type <typeparamref name="T"/>.
 		/// </summary>

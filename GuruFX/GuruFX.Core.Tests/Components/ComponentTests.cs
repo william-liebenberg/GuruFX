@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GuruFX.Core.Components;
 using GuruFX.Core.Entities;
 using GuruFX.Core.Scenes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

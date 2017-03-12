@@ -1,4 +1,5 @@
-﻿using GuruFX.Core.Components;
+﻿using System;
+using GuruFX.Core.Components;
 using GuruFX.Core.Entities;
 using GuruFX.Core.Scenes;
 using GuruFX.Core.SystemComponents;
@@ -15,20 +16,16 @@ namespace GuruFX.Core.Tests.Scenes
 		public void Init()
 		{
 			m_scene = new Scene();
-			m_scene.AddComponents(new SceneUpdater(), new SceneRenderer());
+			//m_scene.AddComponents(new SceneUpdater(), new SceneRenderer());
 		}
 
 		[TestMethod]
-		public void AddSystemComponents()
+		public void AddComponents_to_Scene_using_SystemComponents()
 		{
-			// TODO: THIS IS NOT A TEST OF ADDING SYSTEM COMPONENTS!!!!!!!!!! REWRITE THE TEST USING A FAKE SYSTEM!!!!!!
-			// TODO: Should SystemComponents be added through a special method or just keep and reuse the .AddComponent() method?
-			// TODO: AddSystemComonent should only add to the Scene
-			// TODO: AddEntity should not be called directly on the Scene object??? or should Scene overwrite .AddEntity() to always add to the Root entity?
+			m_scene.AddComponents(new SceneUpdater(), new SceneRenderer());
 
 			IEntity e = new GameObject();
 			m_scene.Root.AddEntity(e);
-			Assert.IsNotNull(e);
 
 			Behaviour behaviour = new Behaviour();
 
@@ -44,6 +41,31 @@ namespace GuruFX.Core.Tests.Scenes
 				Assert.AreEqual(elapsedTime, behaviour.LastElapsedTime);
 				elapsedTime += deltaTime;
 			}
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void AddComponent_to_Scene_using_Component_ThenThrows()
+		{
+			bool result = m_scene.AddComponent(new Behaviour());
+			Assert.IsFalse(result);
+		}
+
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void AddComponents_to_Scene_using_Component_ThenThrows()
+		{
+			bool result = m_scene.AddComponents(new Behaviour());
+			Assert.IsFalse(result);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void AddComponents_to_Scene_using_Components_ThenThrows()
+		{
+			bool result = m_scene.AddComponents(new Behaviour(), new Behaviour());
+			Assert.IsFalse(result);
 		}
 
 		[TestMethod]
@@ -80,7 +102,7 @@ namespace GuruFX.Core.Tests.Scenes
 		{
 			GameObject e = new GameObject();
 			m_scene.Root.AddEntity(e);
-			
+
 			IEntity r = m_scene.RemoveEntity(e);
 			IEntity f = m_scene.FindEntity(r.InstanceID);
 
