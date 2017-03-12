@@ -2,9 +2,6 @@
 
 namespace GuruFX.Core
 {
-	/// <summary>
-	/// TODO: DOCUMENT ALL THE THINGS!
-	/// </summary>
 	public interface IEntityComponentBase
 	{
 		/// <summary>
@@ -29,7 +26,11 @@ namespace GuruFX.Core
 		/// <returns>TRUE if the child Entity was added to this entity, otherwise an exception is thrown.</returns>
 		bool AddEntity(IEntity entity);
 
-
+		/// <summary>
+		/// TODO: WL@
+		/// </summary>
+		/// <param name="entities"></param>
+		/// <returns></returns>
 		bool AddEntities(params IEntity[] entities);
 
 		/// <summary>
@@ -40,7 +41,8 @@ namespace GuruFX.Core
 		IEntity FindEntity(Guid instanceID);
 
 		/// <summary>
-		/// TODO: WL@
+		/// Find the child entity with matching instanceID of this entity, and if none are found on this entity then search through Children.
+		/// TODO: should we only search through ACTIVE children? or all children??
 		/// </summary>
 		/// <param name="instanceID"></param>
 		/// <param name="recurse"></param>

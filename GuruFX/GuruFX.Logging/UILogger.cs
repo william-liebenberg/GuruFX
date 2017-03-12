@@ -4,7 +4,7 @@ namespace GuruFX.Core.Logger
 {
 	public class UILogger : ILogger
 	{
-		readonly object mLockSync = new object();
+		readonly object m_lockSync = new object();
 
 		public event EventHandler<ClearLogEventArgs> ClearMessages;
 
@@ -43,7 +43,7 @@ namespace GuruFX.Core.Logger
 
 		public void Clear(MessageType flagLogsToClear)
 		{
-			lock (mLockSync)
+			lock (m_lockSync)
 			{
 				ClearMessages?.Invoke(this, new ClearLogEventArgs(flagLogsToClear));
 			}
@@ -51,7 +51,7 @@ namespace GuruFX.Core.Logger
 
 		protected virtual void OnMessage(MessageType t, string message)
 		{
-			lock (mLockSync)
+			lock (m_lockSync)
 			{
 				MessageReceived?.Invoke(this, new LogEventArgs(t, message));
 			}

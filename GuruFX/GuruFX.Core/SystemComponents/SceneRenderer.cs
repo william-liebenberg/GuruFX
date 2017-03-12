@@ -27,8 +27,8 @@
 		/// <summary>
 		/// Render all the Child Entities and Components.
 		/// </summary>
-		/// <param name="elapsedTime">TODO: WL@</param>
-		/// <param name="deltaTime">TODO: WL@</param>
+		/// <param name="elapsedTime">Total Elapsed Time since the first update</param>
+		/// <param name="deltaTime">Time passed since last Update</param>
 		public override void Update(double elapsedTime, double deltaTime)
 		{
 			base.Update(elapsedTime, deltaTime);
