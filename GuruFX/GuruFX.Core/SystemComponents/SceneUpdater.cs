@@ -23,6 +23,8 @@
 
 		}
 
+		public int EntitiesUpdated { get; set; }
+
 		/// <summary>
 		/// Update all the Child Entities and Components.
 		/// </summary>
@@ -76,6 +78,7 @@
 				if(updateableComponent != null)
 				{
 					updateableComponent.Update(elapsedTime, deltaTime);
+					++EntitiesUpdated;
 				}
 			}
 		}

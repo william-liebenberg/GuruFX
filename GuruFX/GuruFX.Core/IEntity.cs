@@ -15,5 +15,6 @@ namespace GuruFX.Core
 		bool IsActive { get; set; }
 
 		IEntity Root { get; }
+		bool IsRoot { get; }
 	}
 }

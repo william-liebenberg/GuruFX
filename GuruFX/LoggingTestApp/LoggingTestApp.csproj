@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{27C12E96-2C43-4232-B849-14402D164888}</ProjectGuid>
+    <ProjectGuid>{7607A0D3-A72D-41EC-AEB2-55C6A238965E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuruFX.TestApp</RootNamespace>
-    <AssemblyName>GuruFX.TestApp</AssemblyName>
+    <RootNamespace>LoggingTestApp</RootNamespace>
+    <AssemblyName>LoggingTestApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FakeRenderable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -51,10 +50,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GuruFX.Core\GuruFX.Core.csproj">
-      <Project>{f1dc67bf-540f-4706-aa1d-617fe35a9be3}</Project>
-      <Name>GuruFX.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GuruFX.Logging\GuruFX.Logging.csproj">
       <Project>{4CB6728D-4E24-4778-93ED-ED91FEAA4B45}</Project>
       <Name>GuruFX.Logging</Name>

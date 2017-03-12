@@ -2,7 +2,7 @@
 
 namespace GuruFX.Core.SystemComponents
 {
-	public abstract class SystemComponent : Component, IUpdateable, ISystem
+	public abstract class SystemComponent : Component, ISystem, IUpdateable
 	{
 		public double LastElapsedTime { get; set; }
 

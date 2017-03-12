@@ -22,6 +22,8 @@
 		{
 		}
 
+		public int EntitiesRendered { get; set; }
+
 		/// <summary>
 		/// Render all the Child Entities and Components.
 		/// </summary>
@@ -77,6 +79,7 @@
 				if (updateableComponent != null)
 				{
 					updateableComponent.Render(elapsedTime, deltaTime);
+					++EntitiesRendered;
 				}
 			}
 		}
