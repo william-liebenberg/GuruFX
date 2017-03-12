@@ -1,18 +1,11 @@
-﻿namespace GuruFX.Core.SystemComponents
+﻿using System.Collections.Generic;
+using GuruFX.Core.Entities;
+
+namespace GuruFX.Core.SystemComponents
 {
 	public class SceneRenderer : SystemComponent
 	{
 		public override string Name => "Scene Renderer";
-
-		public SceneRenderer() : base()
-		{
-
-		}
-
-		public SceneRenderer(IEntity parent) : base(parent)
-		{
-
-		}		
 
 		public override void Destroy()
 		{
@@ -33,18 +26,19 @@
 		{
 			base.Update(elapsedTime, deltaTime);
 
-			IEntity[] entities = this.Parent.GetEntities();
+			IEnumerable<IEntity> entities = this.Parent.GetEntities();
+
 			RenderEntities(entities, elapsedTime, deltaTime);
 		}
 
-		protected void RenderEntities(IEntity[] entities, double elapsedTime, double deltaTime)
+		protected void RenderEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
 		{
-			if (entities == null)
+			if(entities == null)
 			{
 				return;
 			}
 
-			foreach (IEntity entity in entities)
+			foreach(IEntity entity in entities)
 			{
 				RenderEntity(entity, elapsedTime, deltaTime);
 			}
@@ -52,12 +46,12 @@
 
 		protected void RenderEntity(IEntity entity, double elapsedTime, double deltaTime)
 		{
-			if (entity == null)
+			if(entity == null)
 			{
 				return;
 			}
 
-			IComponent[] components = entity.GetComponents();
+			IEnumerable<IComponent> components = entity.GetComponents();
 
 			// render all the Components
 			RenderComponents(components, elapsedTime, deltaTime);
@@ -66,17 +60,16 @@
 			RenderEntities(entity.GetEntities(), elapsedTime, deltaTime);
 		}
 
-		protected void RenderComponents(IComponent[] components, double elapsedTime, double deltaTime)
+		protected void RenderComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
 		{
-			if (components == null)
+			if(components == null)
 			{
 				return;
 			}
 
-			foreach (IComponent component in components)
+			foreach(IComponent component in components)
 			{
-				IRenderable updateableComponent = component as IRenderable;
-				if (updateableComponent != null)
+				if(component is IRenderable updateableComponent)
 				{
 					updateableComponent.Render(elapsedTime, deltaTime);
 					++EntitiesRendered;

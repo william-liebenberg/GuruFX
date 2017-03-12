@@ -16,7 +16,6 @@ namespace GuruFX.Core.Tests.Entities
 		[TestInitialize]
 		public void Init()
 		{
-			// how do we inject a Scene factory?
 			m_scene = new Scene();
 			m_root = m_scene.Root;
 		}

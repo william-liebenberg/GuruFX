@@ -3,14 +3,9 @@ using System.Collections.Concurrent;
 
 namespace GuruFX.Core
 {
-	public interface IScene
+	public interface IScene : IBaseObject
 	{
 		ConcurrentDictionary<Guid, ISystem> Systems { get; set; }
-
-		IEntity Root { get; }
-		IEntity FindEntity(IEntity entity);
-		IEntity FindEntity(Guid instanceID);
-		IEntity RemoveEntity(IEntity entity);
-		IEntity RemoveEntity(Guid instanceID);
+		ConcurrentDictionary<Guid, IUpdateable> Updateables { get; set; }
 	}
 }

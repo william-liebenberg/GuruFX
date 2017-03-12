@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace GuruFX.Core
+﻿namespace GuruFX.Core
 {
-	public interface IComponent : IEntityComponentBase
+	public interface IComponent : IBaseObject
 	{
-		Guid InstanceID { get; }
-
 		string Name { get; }
 
 		IEntity Parent { get; set; }

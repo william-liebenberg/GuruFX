@@ -8,20 +8,10 @@ namespace FactoryBenchmark
 		public override string Name => "Test Component";
 
 		public override int Value { get; set; }
-
-		public TestComponent() : base(new GameObject("Dummy"))
-		{
-
-		}
-
-		public TestComponent(int v) : this()
+		
+		public TestComponent(int v)
 		{
 			Value = v;
-		}
-
-		protected TestComponent(IEntity parent) : base(parent)
-		{
-
 		}
 	}
 }
