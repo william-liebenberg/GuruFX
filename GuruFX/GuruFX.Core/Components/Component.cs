@@ -27,7 +27,7 @@ namespace GuruFX.Core.Components
 		/// <summary>
 		/// Name of this Component
 		/// </summary>
-		public string Name { get; set; } = string.Empty;
+		public abstract string Name { get; }
 
 		/// <summary>
 		/// Instance GUID of this Component
@@ -39,57 +39,50 @@ namespace GuruFX.Core.Components
 		/// </summary>
 		public bool IsActive { get; set; } = true;
 
-
-
 		#region Shortcuts to Parent IEntityComponent Methods
 
+		public IEntity[] GetEntities() => Parent?.GetEntities();
+
+		public IComponent[] GetComponents() => Parent.GetComponents();
+
 		public bool AddEntity(IEntity entity) => Parent?.AddEntity(entity) ?? false;
-		public T CreateAndAddEntity<T>() where T : class, IEntity, new() => Parent?.CreateAndAddEntity<T>();
-		public IEntity CreateAndAddEntityOfType(Type entityType) => Parent?.CreateAndAddEntityOfType(entityType);
-		public IEntity FindEntity(IEntity entity, bool recurse) => Parent?.FindEntity(entity, recurse);
-		public IEntity FindEntity(Guid instanceID, bool recurse) => Parent?.FindEntity(instanceID, recurse);
+		public bool AddEntities(params IEntity[] entities) => Parent?.AddEntities(entities) ?? false;
+		public IEntity FindEntity(Guid instanceID) => Parent?.FindEntity(instanceID);
+		public IEntity FindEntityFromChildren(Guid instanceID) => Parent?.FindEntityFromChildren(instanceID);
 		public IEntity RemoveEntity(IEntity entity) => Parent?.RemoveEntity(entity);
 		public IEntity RemoveEntity(Guid instanceID) => Parent?.RemoveEntity(instanceID);
-
-
+		
 		public bool AddComponent(IComponent component) => Parent?.AddComponent(component) ?? false;
-		public T CreateAndAddComponent<T>() where T : class, IComponent, new() => Parent?.CreateAndAddComponent<T>();
-		public IComponent CreateAndAddComponentOfType(Type componentType) => Parent?.CreateAndAddComponentOfType(componentType);
-		public IComponent FindComponent(IComponent component, bool recurse) => Parent?.FindComponent(component, recurse);
-		public IComponent FindComponent(Guid instanceID, bool recurse) => Parent?.FindComponent(instanceID, recurse);
+		public bool AddComponents(params IComponent[] components) => Parent?.AddComponents(components) ?? false;
+		public IComponent FindComponent(Guid instanceID) => Parent?.FindComponent(instanceID);
+		public IComponent FindComponentFromChildren(Guid instanceID) => Parent?.FindComponentFromChildren(instanceID);
 		public IComponent RemoveComponent(IComponent component) => Parent?.RemoveComponent(component);
 		public IComponent RemoveComponent(Guid instanceID) => Parent?.RemoveComponent(instanceID);
 		
-
-		public IComponent GetComponent<T>() where T : IComponent => GetComponent<T>((IComponent)null);
-		public IComponent GetComponent<T>(IComponent excludedComponent) where T : IComponent => GetComponent<T>(new[] { excludedComponent });
-		public IComponent GetComponent<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponent<T>(excludedComponents);
+		public T GetComponent<T>() where T : class, IComponent => GetComponent<T>((T)null);
+		public T GetComponent<T>(IComponent excludedComponent) where T : class, IComponent => GetComponent<T>(new[] { excludedComponent });
+		public T GetComponent<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponent<T>(excludedComponents);
 		
-
-		public IComponent[] GetComponents<T>() where T : IComponent => GetComponents<T>((IComponent)null);
-		public IComponent[] GetComponents<T>(IComponent excludedComponent) where T : IComponent => GetComponents<T>(new[] { excludedComponent });
-		public IComponent[] GetComponents<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponents<T>(excludedComponents);
+		public T[] GetComponents<T>() where T : class, IComponent => GetComponents<T>((T)null);
+		public T[] GetComponents<T>(IComponent excludedComponent) where T : class, IComponent => GetComponents<T>(new[] { excludedComponent });
+		public T[] GetComponents<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponents<T>(excludedComponents);
 		
-
-		public IComponent GetComponentFromParents<T>() where T : IComponent => GetComponentFromParents<T>((IComponent[])null);
-		public IComponent GetComponentFromParents<T>(IComponent excludedComponent) where T : IComponent => GetComponentFromParents<T>(new[] { excludedComponent });
-		public IComponent GetComponentFromParents<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponentFromParents<T>(excludedComponents);
-
-
-		public IComponent[] GetComponentsFromParents<T>() where T : IComponent => GetComponentsFromParents<T>((IComponent[])null);
-		public IComponent[] GetComponentsFromParents<T>(IComponent excludedComponent) where T : IComponent => GetComponentsFromParents<T>(new[] { excludedComponent });
-		public IComponent[] GetComponentsFromParents<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponentsFromParents<T>(excludedComponents);
-
-
-		public IComponent GetComponentFromChildren<T>() where T : IComponent => GetComponentFromChildren<T>((IComponent) null);
-		public IComponent GetComponentFromChildren<T>(IComponent excludedComponent) where T : IComponent => GetComponentFromChildren<T>(new[] {excludedComponent});
-		public IComponent GetComponentFromChildren<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponentFromChildren<T>(excludedComponents);
-
-
-		public IComponent[] GetComponentsFromChildren<T>() where T : IComponent => GetComponentsFromChildren<T>((IComponent)null);
-		public IComponent[] GetComponentsFromChildren<T>(IComponent excludedComponent) where T : IComponent => GetComponentsFromParents<T>(new[] {excludedComponent});
-		public IComponent[] GetComponentsFromChildren<T>(IComponent[] excludedComponents) where T : IComponent => Parent?.GetComponentsFromChildren<T>(excludedComponents);
+		public T GetComponentFromParents<T>() where T : class, IComponent => GetComponentFromParents<T>((T[])null);
+		public T GetComponentFromParents<T>(IComponent excludedComponent) where T : class, IComponent => GetComponentFromParents<T>(new[] { excludedComponent });
+		public T GetComponentFromParents<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponentFromParents<T>(excludedComponents);
 		
+		public T[] GetComponentsFromParents<T>() where T : class, IComponent => GetComponentsFromParents<T>((T[])null);
+		public T[] GetComponentsFromParents<T>(IComponent excludedComponent) where T : class, IComponent => GetComponentsFromParents<T>(new[] { excludedComponent });
+		public T[] GetComponentsFromParents<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponentsFromParents<T>(excludedComponents);
+		
+		public T GetComponentFromChildren<T>() where T : class, IComponent => GetComponentFromChildren<T>((T) null);
+		public T GetComponentFromChildren<T>(IComponent excludedComponent) where T : class, IComponent => GetComponentFromChildren<T>(new[] {excludedComponent});
+		public T GetComponentFromChildren<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponentFromChildren<T>(excludedComponents);
+		
+		public T[] GetComponentsFromChildren<T>() where T : class, IComponent => GetComponentsFromChildren<T>((T)null);
+		public T[] GetComponentsFromChildren<T>(IComponent excludedComponent) where T : class, IComponent => GetComponentsFromParents<T>(new[] {excludedComponent});
+		public T[] GetComponentsFromChildren<T>(IComponent[] excludedComponents) where T : class, IComponent => Parent?.GetComponentsFromChildren<T>(excludedComponents);
+
 		#endregion Shortcuts to Parent Entity Methods
 	}
 }

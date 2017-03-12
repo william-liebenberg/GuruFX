@@ -5,8 +5,8 @@ namespace GuruFX.Core.Logger
 {
 	public class FileLogger : ILogger, IDisposable
 	{
-		private FileStream mFileStream;
-		private StreamWriter mStreamWriter;
+		private FileStream m_fileStream;
+		private StreamWriter m_streamWriter;
 
 		public string Filename { get; set; }
 
@@ -28,7 +28,7 @@ namespace GuruFX.Core.Logger
 
 		public void Log(string msg)
 		{
-			mStreamWriter?.WriteLine(msg);
+			m_streamWriter?.WriteLine(msg);
 		}
 
 		public void Log(string format, params object[] items)
@@ -61,8 +61,8 @@ namespace GuruFX.Core.Logger
 
 			try
 			{
-				mFileStream = new FileStream(finf.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
-				mStreamWriter = new StreamWriter(mFileStream);
+				m_fileStream = new FileStream(finf.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
+				m_streamWriter = new StreamWriter(m_fileStream);
 			}
 			catch (Exception)
 			{
@@ -73,22 +73,22 @@ namespace GuruFX.Core.Logger
 
 		private void CloseStreams()
 		{
-			mStreamWriter?.Flush();
-			mFileStream?.Flush();
+			m_streamWriter?.Flush();
+			m_fileStream?.Flush();
 
-			mStreamWriter?.Dispose();
-			mFileStream?.Dispose();
+			m_streamWriter?.Dispose();
+			m_fileStream?.Dispose();
 
-			mStreamWriter = null;
-			mFileStream = null;
+			m_streamWriter = null;
+			m_fileStream = null;
 		}
 
 		#region IDisposable Support
-		private bool disposedValue; // To detect redundant calls
+		private bool m_disposedValue; // To detect redundant calls
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!disposedValue)
+			if (!m_disposedValue)
 			{
 				if (disposing)
 				{
@@ -99,7 +99,7 @@ namespace GuruFX.Core.Logger
 				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
 				// TODO: set large fields to null.
 
-				disposedValue = true;
+				m_disposedValue = true;
 			}
 		}
 

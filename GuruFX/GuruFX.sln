@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuruFX.Logging", "GuruFX.Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryBenchmark", "FactoryBenchmark\FactoryBenchmark.csproj", "{0D2336DB-46A5-46A9-B71D-61E1B4056BC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggingTestApp", "LoggingTestApp\LoggingTestApp.csproj", "{7607A0D3-A72D-41EC-AEB2-55C6A238965E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0D2336DB-46A5-46A9-B71D-61E1B4056BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D2336DB-46A5-46A9-B71D-61E1B4056BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D2336DB-46A5-46A9-B71D-61E1B4056BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7607A0D3-A72D-41EC-AEB2-55C6A238965E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7607A0D3-A72D-41EC-AEB2-55C6A238965E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7607A0D3-A72D-41EC-AEB2-55C6A238965E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7607A0D3-A72D-41EC-AEB2-55C6A238965E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

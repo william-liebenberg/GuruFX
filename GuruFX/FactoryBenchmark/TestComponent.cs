@@ -5,7 +5,11 @@ namespace FactoryBenchmark
 {
 	public class TestComponent : TestComponentBase
 	{
-		public TestComponent() : base(new Entity("Dummy"))
+		public override string Name => "Test Component";
+
+		public override int Value { get; set; }
+
+		public TestComponent() : base(new GameObject("Dummy"))
 		{
 
 		}
@@ -19,7 +23,5 @@ namespace FactoryBenchmark
 		{
 
 		}
-
-		public sealed override int Value { get; set; }
 	}
 }
