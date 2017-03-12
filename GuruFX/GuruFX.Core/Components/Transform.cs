@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GuruFX.Core.Components
+﻿namespace GuruFX.Core.Components
 {
 	/// <summary>
 	/// This is just a dummy Transform Component for now.

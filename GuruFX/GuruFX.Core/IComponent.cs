@@ -2,7 +2,7 @@
 
 namespace GuruFX.Core
 {
-	public interface IComponent : IEntityComponentBase
+	public interface IComponent
 	{
 		Guid InstanceID { get; }
 

@@ -23,7 +23,7 @@ namespace GuruFX.TestApp
 			s.AddEntity(e);
 			e.AddComponent(new Behaviour()); 
 			e.AddComponent(new FakeRenderable());
-
+			
 			// simple game loop
 			double elapsedTime = 0;
 			double lastElapsedTime = 0;

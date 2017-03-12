@@ -4,16 +4,6 @@
 	{
 		public override string Name => "Scene Renderer";
 
-		public SceneRenderer() : base()
-		{
-
-		}
-
-		public SceneRenderer(IEntity parent) : base(parent)
-		{
-
-		}		
-
 		public override void Destroy()
 		{
 		}

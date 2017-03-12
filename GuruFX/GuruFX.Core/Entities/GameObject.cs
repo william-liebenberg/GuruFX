@@ -11,7 +11,7 @@ namespace GuruFX.Core.Entities
 		public GameObject()
 		{
 			// every game object will have a transform so that it can be placed, orientated, and scaled.
-			AddComponent(new Transform());
+			this.AddComponent(new Transform());
 
 			// from here on we can ensure that every game object has access to things like:
 			//	* The Camera System?

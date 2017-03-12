@@ -32,7 +32,7 @@ namespace GuruFX.Core.Scenes
 			// the Scene itself does not update/process the entities that it owns.
 			// It is up to this Scene's "System Components" to deal with all the entities and their components
 			
-			SystemComponent[] systemComponents = GetComponents<SystemComponent>();
+			SystemComponent[] systemComponents = this.GetComponents<SystemComponent>();
 
 			if (systemComponents != null)
 			{

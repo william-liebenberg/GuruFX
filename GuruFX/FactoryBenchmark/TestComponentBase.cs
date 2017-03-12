@@ -5,10 +5,6 @@ namespace FactoryBenchmark
 {
 	public abstract class TestComponentBase : Component
 	{
-		protected TestComponentBase(IEntity parent) : base(parent)
-		{
-		}
-
 		public abstract int Value { get; set; }
 	}
 }

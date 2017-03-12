@@ -4,15 +4,6 @@
 	{
 		public override string Name => "Scene Updater";
 
-		public SceneUpdater() : base()
-		{
-
-		}
-
-		public SceneUpdater(IEntity parent) : base(parent)
-		{
-		}
-		
 		public override void Init()
 		{
 
