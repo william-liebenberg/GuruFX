@@ -16,7 +16,27 @@ namespace GuruFX.Core.Tests.Scenes
 		public void Init()
 		{
 			m_scene = new Scene();
-			//m_scene.AddComponents(new SceneUpdater(), new SceneRenderer());
+		}
+
+		[TestMethod]
+		public void NewScene_ValidRoot_DoesNotThrow()
+		{
+			IEntity root = new GameObject();
+			Scene s = new Scene(root);
+
+			Assert.IsNotNull(root);
+			Assert.IsNotNull(s);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void NewScene_NullRoot_ThenThrows()
+		{
+			IEntity root = null;
+
+			Assert.IsNull(root);
+
+			Scene s = new Scene(root);
 		}
 
 		[TestMethod]
@@ -38,6 +58,7 @@ namespace GuruFX.Core.Tests.Scenes
 			for(int j = 0; j < 10; j++)
 			{
 				m_scene.Update(elapsedTime, deltaTime);
+				Assert.AreEqual(elapsedTime, m_scene.LastElapsedTime);
 				Assert.AreEqual(elapsedTime, behaviour.LastElapsedTime);
 				elapsedTime += deltaTime;
 			}
@@ -79,52 +100,7 @@ namespace GuruFX.Core.Tests.Scenes
 			Assert.IsNotNull(e.InstanceID);
 			Assert.IsNull(e.Parent);
 			Assert.IsFalse(string.IsNullOrEmpty(e.InstanceID.ToString()));
-		}
-
-		[TestMethod]
-		public void FindEntity_using_InstanceID()
-		{
-			// create a new entity
-			IEntity e = new GameObject();
-			m_scene.Root.AddEntity(e);
-
-			// find the entity using the instanceID
-			IEntity f = m_scene.FindEntity(e.InstanceID);
-
-			// the entities must be same
-			Assert.IsNotNull(f);
-			Assert.AreSame(f, e);
-			Assert.AreSame(f.Parent, m_scene.Root);
-		}
-
-		[TestMethod]
-		public void RemoveEntity_using_Entity()
-		{
-			GameObject e = new GameObject();
-			m_scene.Root.AddEntity(e);
-
-			IEntity r = m_scene.RemoveEntity(e);
-			IEntity f = m_scene.FindEntity(r.InstanceID);
-
-			Assert.IsNotNull(e);
-			Assert.IsNotNull(r);
-			Assert.AreSame(r, e);
-			Assert.IsNull(f);
-		}
-
-		[TestMethod]
-		public void RemoveEntity_using_InstanceID()
-		{
-			GameObject e = new GameObject();
-			m_scene.Root.AddEntity(e);
-
-			IEntity r = m_scene.RemoveEntity(e.InstanceID);
-			IEntity f = m_scene.FindEntity(r.InstanceID);
-
-			Assert.IsNotNull(e);
-			Assert.IsNotNull(r);
-			Assert.AreSame(r, e);
-			Assert.IsNull(f);
+			Assert.IsTrue(m_scene.Name.Equals(e.Name));
 		}
 	}
 }

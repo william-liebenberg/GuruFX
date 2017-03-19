@@ -2,8 +2,6 @@
 {
 	public interface IUpdateable : IBaseObject
 	{
-		double LastElapsedTime { get; set; }
-
 		/// <summary>
 		/// Update the Current State of the concrete. 
 		/// </summary>

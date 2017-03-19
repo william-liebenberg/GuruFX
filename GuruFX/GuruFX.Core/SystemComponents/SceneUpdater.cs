@@ -5,7 +5,7 @@ namespace GuruFX.Core.SystemComponents
 {
 	public class SceneUpdater : SystemComponent
 	{
-		public override string Name => "Scene Updater";
+		public override string Name { get; set; } = "Scene Updater";
 		
 		public override void Init()
 		{
@@ -30,7 +30,7 @@ namespace GuruFX.Core.SystemComponents
 			UpdateEntities(entities, elapsedTime, deltaTime);
 		}
 
-		protected void UpdateEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
+		private void UpdateEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
 		{
 			if(entities == null)
 			{
@@ -43,7 +43,7 @@ namespace GuruFX.Core.SystemComponents
 			}
 		}
 
-		protected void UpdateEntity(IEntity entity, double elapsedTime, double deltaTime)
+		private void UpdateEntity(IEntity entity, double elapsedTime, double deltaTime)
 		{
 			if(entity == null)
 			{
@@ -59,7 +59,7 @@ namespace GuruFX.Core.SystemComponents
 			UpdateEntities(entity.GetEntities(), elapsedTime, deltaTime);
 		}
 
-		protected void UpdateComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
+		private void UpdateComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
 		{
 			if(components == null)
 			{
@@ -68,11 +68,13 @@ namespace GuruFX.Core.SystemComponents
 
 			foreach(IComponent component in components)
 			{
-				if(component is IUpdateable updateableComponent)
+				if (!(component is IUpdateable updateableComponent))
 				{
-					updateableComponent.Update(elapsedTime, deltaTime);
-					++EntitiesUpdated;
+					continue;
 				}
+
+				updateableComponent.Update(elapsedTime, deltaTime);
+				++EntitiesUpdated;
 			}
 		}
 	}

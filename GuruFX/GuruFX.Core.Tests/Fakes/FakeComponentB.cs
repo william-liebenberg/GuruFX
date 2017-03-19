@@ -1,9 +1,9 @@
 using GuruFX.Core.Components;
 
-namespace GuruFX.Core.Tests.Components
+namespace GuruFX.Core.Tests.Fakes
 {
 	internal class FakeComponentB : Component
 	{
-		public override string Name => "Fake Component B";
+		public override string Name { get; set; } = nameof(FakeComponentB);
 	}
 }

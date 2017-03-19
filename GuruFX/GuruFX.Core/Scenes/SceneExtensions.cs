@@ -17,21 +17,21 @@ namespace GuruFX.Core.Scenes
 		public static bool AddComponent(this Scene scene, Component component)
 		{
 			bool addAttempt = false;
-			
-			if(component is ISystem)
+
+			if(component is ISystem system)
 			{
-				if(scene.AddComponent(component as ISystem))
+				if(scene.AddComponent(system))
 				{
-					if(component is IUpdateable)
+					if(component is IUpdateable updateable)
 					{
-						if(scene.AddComponent(component as IUpdateable))
+						if(scene.AddComponent(updateable))
 						{
 							addAttempt = true;
 						}
 					}
 				}
 			}
-			
+
 			if(!addAttempt)
 			{
 				throw new ArgumentException($"Only {nameof(SystemComponent)}s can be added to the Scene");

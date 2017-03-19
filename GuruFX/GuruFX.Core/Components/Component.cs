@@ -12,7 +12,7 @@ namespace GuruFX.Core.Components
 		/// <summary>
 		/// Name of this Component
 		/// </summary>
-		public abstract string Name { get; }
+		public abstract string Name { get; set; }
 
 		/// <summary>
 		/// Instance GUID of this Component

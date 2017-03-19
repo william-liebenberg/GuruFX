@@ -5,6 +5,11 @@ namespace GuruFX.Core.Entities
 {
 	public abstract class Entity : IEntity
 	{
+		protected Entity(string name)
+		{
+			this.Name = name;
+		}
+
 		/// <summary>
 		/// Dictionary of Components. Key = ComponentInstanceID, Value = Component
 		/// </summary>
@@ -18,7 +23,7 @@ namespace GuruFX.Core.Entities
 		/// <summary>
 		/// Name of this Entity
 		/// </summary>
-		public abstract string Name { get; set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Instance GUID of this Entity
