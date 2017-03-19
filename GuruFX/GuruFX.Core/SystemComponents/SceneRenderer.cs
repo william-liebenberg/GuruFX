@@ -5,7 +5,7 @@ namespace GuruFX.Core.SystemComponents
 {
 	public class SceneRenderer : SystemComponent
 	{
-		public override string Name => "Scene Renderer";
+		public override string Name { get; set; } = "Scene Renderer";
 
 		public override void Destroy()
 		{
@@ -31,7 +31,7 @@ namespace GuruFX.Core.SystemComponents
 			RenderEntities(entities, elapsedTime, deltaTime);
 		}
 
-		protected void RenderEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
+		private void RenderEntities(IEnumerable<IEntity> entities, double elapsedTime, double deltaTime)
 		{
 			if(entities == null)
 			{
@@ -44,7 +44,7 @@ namespace GuruFX.Core.SystemComponents
 			}
 		}
 
-		protected void RenderEntity(IEntity entity, double elapsedTime, double deltaTime)
+		private void RenderEntity(IEntity entity, double elapsedTime, double deltaTime)
 		{
 			if(entity == null)
 			{
@@ -60,7 +60,7 @@ namespace GuruFX.Core.SystemComponents
 			RenderEntities(entity.GetEntities(), elapsedTime, deltaTime);
 		}
 
-		protected void RenderComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
+		private void RenderComponents(IEnumerable<IComponent> components, double elapsedTime, double deltaTime)
 		{
 			if(components == null)
 			{
@@ -69,11 +69,13 @@ namespace GuruFX.Core.SystemComponents
 
 			foreach(IComponent component in components)
 			{
-				if(component is IRenderable updateableComponent)
+				if (!(component is IRenderable updateableComponent))
 				{
-					updateableComponent.Render(elapsedTime, deltaTime);
-					++EntitiesRendered;
+					continue;
 				}
+
+				updateableComponent.Render(elapsedTime, deltaTime);
+				++EntitiesRendered;
 			}
 		}
 	}

@@ -3,6 +3,7 @@ using System.Linq;
 using GuruFX.Core.Entities;
 using GuruFX.Core.Scenes;
 using GuruFX.Core.Tests.Components;
+using GuruFX.Core.Tests.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GuruFX.Core.Tests.Entities

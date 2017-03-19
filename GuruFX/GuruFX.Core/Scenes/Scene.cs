@@ -5,15 +5,37 @@ using GuruFX.Core.Entities;
 
 namespace GuruFX.Core.Scenes
 {
-	public class Scene : Entity, IScene, IUpdateable, ISystem
+	public class Scene : IScene, IUpdateable, ISystem
 	{
-		public double LastElapsedTime { get; set; }
+		public Scene()
+		{
+			this.Root = new GameObject("Root");
+		}
 
-		public override string Name { get; set; } = "Scene";
+		public Scene(IEntity root)
+		{
+			if (root == null)
+			{
+				throw new ArgumentNullException(nameof(root), "Scene Root Entity cannot be NULL!");
+			}
+
+			this.Root = root;
+		}
+
+		public IEntity Root { get; }
+
+		public double LastElapsedTime { get; private set; }
+
+		public string Name {
+			get { return this.Root.Name; }
+			set { this.Root.Name = value; }
+		}
 
 		public ConcurrentDictionary<Guid, ISystem> Systems { get; set; } = new ConcurrentDictionary<Guid, ISystem>();
 		public ConcurrentDictionary<Guid, IUpdateable> Updateables { get; set; } = new ConcurrentDictionary<Guid, IUpdateable>();
-		
+
+		public Guid InstanceID { get; set; } = Guid.NewGuid();
+
 		public void Init()
 		{
 			foreach(KeyValuePair<Guid, ISystem> system in this.Systems)

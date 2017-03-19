@@ -5,7 +5,7 @@
 	/// </summary>
 	public class Behaviour : Component, IUpdateable
 	{
-		public override string Name => "Behaviour";
+		public override string Name { get; set; } = nameof(Behaviour);
 
 		public double LastElapsedTime { get; set; }
 		

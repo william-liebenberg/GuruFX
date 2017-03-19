@@ -4,11 +4,11 @@ namespace GuruFX.Core.Entities
 {
 	public class GameObject : Entity
 	{
-		public override string Name { get; set; } = "Game Object";
+		public GameObject() : this(nameof(GameObject))
+		{
+		}
 
-		public double LastElapsedTime { get; set; }
-
-		public GameObject()
+		public GameObject(string name) : base(name)
 		{
 			// every game object will have a transform so that it can be placed, orientated, and scaled.
 			this.AddComponent(new Transform());
@@ -19,11 +19,6 @@ namespace GuruFX.Core.Entities
 			//	* The Input System?
 			//	* The Graphics/Lighting System?
 			//	* etc.
-		}
-
-		public GameObject(string name) : this()
-		{
-			Name = name;
 		}
 	}
 }
